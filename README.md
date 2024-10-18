@@ -147,9 +147,9 @@ Make sure to check each project's `README.md` for specific compilation and execu
 This repository is maintained and contributed to by students from **Faculty of Engineering, Ain Shams University** as part of the **Computer Networks and Security** course.
 
 - [Nouran Salah](https://github.com/Nouran-Salah)
-- [Omnia Fathy] (https://github.com/AGX18)
-- [Rodaina Mohamed] ()
-- [Sarah Tarek] (https://github.com/Sarah-Tarek)
+- [Omnia Fathy](https://github.com/AGX18)
+- [Rodaina Mohamed]()
+- [Sarah Tarek](https://github.com/Sarah-Tarek)
 - [Mahmoud Abdelraouf](https://github.com/Mahmoud-Abdelraouf)
 
 ---

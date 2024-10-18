@@ -80,7 +80,7 @@ This course introduces students to the fundamentals of computer networks and cyb
 - **Description**: Simulate attacks and vulnerabilities using tools like Wireshark and nmap.
 - **Topics Covered**: Vulnerability testing, network monitoring, ethical hacking.
 
-... (add more projects as needed)
+... 
 
 ---
 
@@ -137,8 +137,6 @@ make
 ./program "e" <key> <plaintext_file> <ciphertext_file>  # Encrypt
 ./program "d" <key> <ciphertext_file> <plaintext_file>  # Decrypt
 ```
-
-Make sure to check each project's `README.md` for specific compilation and execution instructions.
 
 ---
 

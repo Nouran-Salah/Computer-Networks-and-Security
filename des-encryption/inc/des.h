@@ -17,7 +17,7 @@
  * @example
  * uint8_t input[8] = {0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF};
  * uint8_t output[8] = {0};
- * const int table[64] = { ... }; // Example permutation table
+ * const int table[64] = { ... };
  * permute(input, output, table, 64);
  */
 void permute(const uint8_t *input, uint8_t *output, const int *table, int size);

@@ -121,14 +121,24 @@ static const int S_BOX[8][4][16] = {
 
 // Permutation function for applying permutation tables
 void permute(const uint8_t *input, uint8_t *output, const int *table, int size) {
+    memset(output, 0, (size + 7) / 8); // Clear output buffer
 
+    for(int i=0; i<size; i++) {
+        int byte_index = (table[i]-1) / 8; // Determine input byte index
+        int bit_index = (table[i] - 1) % 8; // Determine input bit index
+        int bit = (input[byte_index] >> (7 - bit_index)) & 1; // Extract the bit
+        
+        output[i/8] |= bit << (7 - (i % 8)); // Set the bit in the output
+    }
 }
 
 // Initial and Final Permutations
-void initial_permutation(uint8_t *input, uint8_t *output) {
+void initial_permutation(uint8_t *input, uint8_t *output) {  
+    permute(input, output, IP_TABLE, 64);
 }
 
 void final_permutation(uint8_t *input, uint8_t *output) {
+    permute(input, output, FP_TABLE, 64);
 }
 
 // Left circular shift

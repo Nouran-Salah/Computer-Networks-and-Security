@@ -148,7 +148,7 @@ This repository is maintained and contributed to by students from **Faculty of E
 - [Omnia Fathy](https://github.com/AGX18)
 - [Rodaina Mohamed](https://github.com/wiserODec)
 - [Sarah Tarek](https://github.com/Sarah-Tarek)
-- [Mahmoud Abdelraouf](https://github.com/Mahmoud-Abdelraouf)
+- [CodeNinja](https://github.com/CodeNinja)
 
 ---
 

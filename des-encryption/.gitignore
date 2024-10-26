@@ -1,0 +1,48 @@
+# Compiled object files
+*.o
+
+# Compiled dynamic libraries
+*.so
+
+# Compiled static libraries
+*.a
+
+# Executable files
+*.exe
+*.out
+*.elf
+
+# Debug files
+*.dSYM/
+*.debug
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Build directories
+/build/
+bin/
+obj/
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+*.swp
+*~
+
+# Coverage files
+*.gcda
+*.gcno
+*.gcov
+
+# Config files
+*.conf
+
+# Ignore all executable files in the project
+*.exe
+
+# Ignore hex files
+*.hex
+

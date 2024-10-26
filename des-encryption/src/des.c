@@ -121,29 +121,84 @@ static const int S_BOX[8][4][16] = {
 
 // Permutation function for applying permutation tables
 void permute(const uint8_t *input, uint8_t *output, const int *table, int size) {
+    memset(output, 0, (size + 7) / 8); // Clear output buffer
 
+    for(int i=0; i<size; i++) {
+        int byte_index = (table[i]-1) / 8; // Determine input byte index
+        int bit_index = (table[i] - 1) % 8; // Determine input bit index
+        int bit = (input[byte_index] >> (7 - bit_index)) & 1; // Extract the bit
+        
+        output[i/8] |= bit << (7 - (i % 8)); // Set the bit in the output
+    }
 }
 
 // Initial and Final Permutations
-void initial_permutation(uint8_t *input, uint8_t *output) {
+void initial_permutation(uint8_t *input, uint8_t *output) {  
+    permute(input, output, IP_TABLE, 64);
 }
 
 void final_permutation(uint8_t *input, uint8_t *output) {
+    permute(input, output, FP_TABLE, 64);
 }
 
 // Left circular shift
 void left_shift(uint8_t *half, int shifts) {
-
+    uint32_t value = (half[0] << 24) | (half[1] << 16) | (half[2] << 8) | half[3];
+    value = (value << shifts) | (value >> (28 - shifts));
+    half[0] = (value >> 24) & 0xFF;
+    half[1] = (value >> 16) & 0xFF;
+    half[2] = (value >> 8) & 0xFF;
+    half[3] = value & 0xFF;
 }
 
-// Key scheduling
+// Key scheduling: Generate 16 round keys
 void key_schedule(uint8_t *key, uint8_t roundKeys[16][6]) {
+    uint8_t permutedKey[7] = {0};
+    uint8_t left[4] = {0}, right[4] = {0};
 
+    // Apply PC1 to the key
+    permute(key, permutedKey, PC1, 56);
+
+    // Split into left and right halves
+    memcpy(left, permutedKey, 4);
+    memcpy(right, permutedKey + 3, 4);
+
+    // Generate 16 round keys
+    for (int i = 0; i < 16; i++) {
+        left_shift(left, SHIFTS[i]);
+        left_shift(right, SHIFTS[i]);
+
+        uint8_t combined[7] = {0};
+        memcpy(combined, left, 4);
+        memcpy(combined + 3, right, 4);
+
+        // Apply PC2 to get the 48-bit subkey
+        permute(combined, roundKeys[i], PC2, 48);
+    }
 }
 
 // Feistel function
 void feistel(const uint8_t *right, const uint8_t *subkey, uint8_t *output) {
- 
+    uint8_t expanded[6] = {0};
+    uint8_t substituted[4] = {0};
+
+    // Expansion (E)
+    permute(right, expanded, E_TABLE, 48);
+
+    // XOR with subkey
+    for (int i = 0; i < 6; i++) {
+        expanded[i] ^= subkey[i];
+    }
+
+    // S-Box substitution
+    for (int i = 0; i < 8; i++) {
+        int row = ((expanded[i / 6] >> 6) & 0x2) | (expanded[i / 6] & 0x1);
+        int col = (expanded[i / 6] >> 1) & 0xF;
+        substituted[i / 2] |= S_BOX[i][row][col] << (4 * (1 - (i % 2)));
+    }
+
+    // Permutation (P)
+    permute(substituted, output, P_TABLE, 32);
 }
 
 // DES encryption/decryption

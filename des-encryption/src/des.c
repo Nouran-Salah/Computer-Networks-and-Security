@@ -179,7 +179,26 @@ void key_schedule(uint8_t *key, uint8_t roundKeys[16][6]) {
 
 // Feistel function
 void feistel(const uint8_t *right, const uint8_t *subkey, uint8_t *output) {
- 
+    uint8_t expanded[6] = {0};
+    uint8_t substituted[4] = {0};
+
+    // Expansion (E)
+    permute(right, expanded, E_TABLE, 48);
+
+    // XOR with subkey
+    for (int i = 0; i < 6; i++) {
+        expanded[i] ^= subkey[i];
+    }
+
+    // S-Box substitution
+    for (int i = 0; i < 8; i++) {
+        int row = ((expanded[i / 6] >> 6) & 0x2) | (expanded[i / 6] & 0x1);
+        int col = (expanded[i / 6] >> 1) & 0xF;
+        substituted[i / 2] |= S_BOX[i][row][col] << (4 * (1 - (i % 2)));
+    }
+
+    // Permutation (P)
+    permute(substituted, output, P_TABLE, 32);
 }
 
 // DES encryption/decryption

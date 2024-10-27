@@ -226,7 +226,7 @@ void encrypt(uint8_t *block, uint8_t *key) {
     uint8_t Left_block[4],Right_block[4],Permuted_block[8];
     uint8_t roundkeys[16][6]={0};
     uint8_t Temp_block[4],f_output[4],Last_round[8]={0};
-    uint8_t *enc_text;
+    uint8_t enc_text[8];
 
     
     //initial permutation
@@ -267,7 +267,7 @@ void decrypt(uint8_t *block, uint8_t *key){
     uint8_t Left_block[4],Right_block[4],Permuted_block[8];
     uint8_t roundkeys[16][6]={0};
     uint8_t Temp_block[4],f_output[4],Last_round[8]={0};
-    uint8_t *dec_text;
+    uint8_t dec_text[8];
 
     
     //initial permutation

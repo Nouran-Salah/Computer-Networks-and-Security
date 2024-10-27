@@ -257,7 +257,7 @@ void encrypt(uint8_t *block, uint8_t *key) {
     memcpy(Last_round+4,Left_block,4);
 
     //final permutation
-    permute(Last_round,enc_text,FP_TABLE,64);
+    permute(Last_round,block,FP_TABLE,64);
 
 
 }
@@ -298,7 +298,9 @@ void decrypt(uint8_t *block, uint8_t *key){
     memcpy(Last_round+4,Right_block,4);
 
     //final permutation
-    permute(Last_round,dec_text,FP_TABLE,64);
+    permute(Last_round,block,FP_TABLE,64);
+
+
 
 }
 

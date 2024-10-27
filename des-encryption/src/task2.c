@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <stdio.h>
+
 // Permuted Choice 1 (PC1)
 static const int PC1[56] = {
     57,49,41,33,25,17,9,
@@ -23,74 +25,53 @@ static const int PC2[48] = {
     46,42,50,36,29,32
 };
 
-// Permutation function for applying permutation tables
-void permute(const uint8_t *input, uint8_t *output, const int *table, int size) {
-    // output is 56 bits
-    // we have 64 bits -> 56 bits permuted using PC-1
+// Number of shifts per round
+static const int SHIFTS[16] = { 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1 };
 
-    for (int i = 0; i < 56; i++) {
-        uint32_t bit_pos = table[i];
-        uint32_t select_chunk = bit_pos / 8;
-        uint8_t *chunk = (input + select_chunk);
-        output[select_chunk] = output[select_chunk] | (*chunk & (1 << (bit_pos % 8)));
-    }
-}
-
-
-// Left circular shift
+// Left circular shift for 28-bit halves
 void left_shift(uint32_t *half, int shifts) {
-    for (int i = 0; i < shifts; i++) {
-        *half = *half >> 1 | ((*half & 0x1) << 27);
-    };
-    
+    *half = ((*half << shifts) & 0x0FFFFFFF) | (*half >> (28 - shifts));
 }
 
-// Key scheduling
+// Key scheduling function
 void key_schedule(uint8_t *key, uint8_t roundKeys[16][6]) {
-    // PC-1
-    // output is 56 bits ignore every 8-th bit
-    // we have 64 bits -> 56 bits permuted using PC-1
-    uint64_t  medOutput;
-    for (int i = 0; i < 56; i++) {
-        int bit_pos = PC1[i];
-        int select_chunk = bit_pos / 8;
-        uint8_t *chunk = (key + select_chunk);
-        uint64_t bit = *chunk & (1 << (bit_pos % 8));
-        bit = bit << i;
-        medOutput = medOutput | bit;
-    }
-    // arrange output to 56-bit -> 0x00FFFFFFFFFFFFFF
-
-    uint64_t  output1 = 0x00FFFFFFFFFFFFFF;
-
-    for (int i = 0; i < 56; i+=7) { 
-        uint64_t chunk = (0x7F & medOutput); // 0x7F = 0111 1111 to keep only 7 bits
-        chunk <<= i; // shift the extracted bit by i to prepare it for the or operation
-        output1 |= chunk;
-        
-        // Shift medOutput to process the next 8 bits
-        medOutput >>= 8;
-    }
-
-    int firstHalf = output1 & 0x0FFFFFFF; // first
-    int secondHalf = (output1 >> 28);
+    uint64_t medOutput = 0;
     
+    // Apply PC-1 permutation
+    for (int i = 0; i < 56; i++) {
+        int bit_pos = PC1[i] - 1;  // PC1 is 1-based
+        uint64_t bit = (key[bit_pos / 8] >> (7 - (bit_pos % 8))) & 1;  // Extract bit
+        medOutput |= bit << (55 - i);  // Place in medOutput
+    }
+    
+    // Split the 56-bit medOutput into two 28-bit halves
+    uint32_t firstHalf = (medOutput >> 28) & 0x0FFFFFFF;
+    uint32_t secondHalf = medOutput & 0x0FFFFFFF;
+    
+    // Generate 16 round keys
+    for (int round = 0; round < 16; round++) {
+        // Perform left circular shift on both halves
+        left_shift(&firstHalf, SHIFTS[round]);
+        left_shift(&secondHalf, SHIFTS[round]);
+        
+        uint64_t combined = ((uint64_t)firstHalf << 28) | secondHalf;  // Combine halves
 
+        // Apply PC-2 permutation to generate round key
+        for (int j = 0; j < 48; j++) {
+            int bit_pos = PC2[j] - 1;  // PC2 is 1-based
+            uint8_t bit = (combined >> (55 - bit_pos)) & 1;  // Extract bit
+            roundKeys[round][j / 8] |= bit << (7 - (j % 8));  // Set bit in round key
+        }
+    }
 }
 
-// void applyPermutation(uint8_t *key, uint8_t &roundKeys[16][6], const int[] &table, int size) {
-//     for (int i = 0; i < size; i++) {
-//         int bit_pos = PC1[i];
-//         int select_chunk = bit_pos / 8;
-//         uint8_t *chunk = (input + select_chunk);
-//         output[select_chunk] = output[select_chunk] | (*chunk & (1 << (bit_pos % 8)));
-//     }
-// }
 
 int main(void) {
+    uint8_t key[8] = {0x13, 0x34, 0x57, 0x79, 0x9B, 0xBC, 0xDF, 0xF1};  // Example key
+    uint8_t roundKeys[16][6] = {0};  // Initialize roundKeys to 0
 
-
-
+    key_schedule(key, roundKeys);  // Generate round keys
+  
 
     return 0;
 }

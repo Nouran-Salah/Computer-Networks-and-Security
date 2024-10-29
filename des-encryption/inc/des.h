@@ -36,7 +36,7 @@ void permute(const uint8_t *input, uint8_t *output, const int *table, int size);
  * left_shift(half, 2);
  * // half now contains the shifted result.
  */
-void left_shift(uint8_t *half, int shifts);
+void left_shift(uint32_t *half, int shifts);
 
 /**
  * @brief Generates the 16 round keys used in DES encryption/decryption.

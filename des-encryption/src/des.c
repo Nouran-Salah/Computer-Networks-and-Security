@@ -1,7 +1,8 @@
 #include <stdint.h>
 #include <string.h>
-#include "des.h"
-#include "utils.h"
+#include <stdio.h>
+#include "../inc/des.h"
+#include "../inc/utils.h"
 
 // Initial Permutation Table (IP)
 static const int IP_TABLE[64] = {
@@ -142,66 +143,180 @@ void final_permutation(uint8_t *input, uint8_t *output) {
 }
 
 // Left circular shift
-void left_shift(uint8_t *half, int shifts) {
-    uint32_t value = (half[0] << 24) | (half[1] << 16) | (half[2] << 8) | half[3];
-    value = (value << shifts) | (value >> (28 - shifts));
-    half[0] = (value >> 24) & 0xFF;
-    half[1] = (value >> 16) & 0xFF;
-    half[2] = (value >> 8) & 0xFF;
-    half[3] = value & 0xFF;
+void left_shift(uint32_t *half, int shifts) {
+    // Define a mask for the lower 28 bits
+    const uint32_t MASK_28_BITS = 0x0FFFFFFF;
+
+    // Perform the left shift with wrap-around for 28 bits
+    uint32_t shifted = (*half << shifts) & MASK_28_BITS;
+    uint32_t wrapped = *half >> (28 - shifts);
+
+    // Combine the shifted and wrapped parts
+    *half = shifted | wrapped;
 }
 
 // Key scheduling: Generate 16 round keys
 void key_schedule(uint8_t *key, uint8_t roundKeys[16][6]) {
-    uint8_t permutedKey[7] = {0};
-    uint8_t left[4] = {0}, right[4] = {0};
+    uint64_t medOutput = 0;
 
-    // Apply PC1 to the key
-    permute(key, permutedKey, PC1, 56);
+    // Apply PC-1 permutation
+    for (int i = 0; i < 56; i++) {
+        int bit_pos = PC1[i] - 1; // PC1 is 1-based
+        uint64_t bit = (key[bit_pos / 8] >> (7 - (bit_pos % 8))) & 1; // Extract bit
+        medOutput |= bit << (55 - i); // Place in medOutput
+    }
 
-    // Split into left and right halves
-    memcpy(left, permutedKey, 4);
-    memcpy(right, permutedKey + 3, 4);
+    // Split the 56-bit medOutput into two 28-bit halves
+    uint32_t firstHalf = (medOutput >> 28) & 0x0FFFFFFF;
+    uint32_t secondHalf = medOutput & 0x0FFFFFFF;
+
+    // Initialize roundKeys array to zero
+    memset(roundKeys, 0, 16 * 6 * sizeof(uint8_t));
 
     // Generate 16 round keys
-    for (int i = 0; i < 16; i++) {
-        left_shift(left, SHIFTS[i]);
-        left_shift(right, SHIFTS[i]);
+    for (int round = 0; round < 16; round++) {
+        // Perform left circular shift on both halves
+        left_shift(&firstHalf, SHIFTS[round]);
+        left_shift(&secondHalf, SHIFTS[round]);
 
-        uint8_t combined[7] = {0};
-        memcpy(combined, left, 4);
-        memcpy(combined + 3, right, 4);
+        // Combine halves into a 56-bit value
+        uint64_t combined = ((uint64_t)firstHalf << 28) | secondHalf;
 
-        // Apply PC2 to get the 48-bit subkey
-        permute(combined, roundKeys[i], PC2, 48);
+        // Apply PC-2 permutation to generate round key
+        for (int j = 0; j < 48; j++) {
+            int bit_pos = PC2[j] - 1; // PC2 is 1-based
+            uint8_t bit = (combined >> (55 - bit_pos)) & 1; // Extract bit
+            roundKeys[round][j / 8] |= bit << (7 - (j % 8)); // Set bit in round key
+        }
     }
 }
 
 // Feistel function
 void feistel(const uint8_t *right, const uint8_t *subkey, uint8_t *output) {
     uint8_t expanded[6] = {0};
-    uint8_t substituted[4] = {0};
+    uint8_t sbox_out_hex[4] = {0};
 
-    // Expansion (E)
+    // Step 1: Expand the right half using E_TABLE
     permute(right, expanded, E_TABLE, 48);
 
-    // XOR with subkey
+    // Step 2: XOR the expanded output with the subkey
     for (int i = 0; i < 6; i++) {
         expanded[i] ^= subkey[i];
     }
 
-    // S-Box substitution
+    // Step 3: S-box substitution
     for (int i = 0; i < 8; i++) {
-        int row = ((expanded[i / 6] >> 6) & 0x2) | (expanded[i / 6] & 0x1);
-        int col = (expanded[i / 6] >> 1) & 0xF;
-        substituted[i / 2] |= S_BOX[i][row][col] << (4 * (1 - (i % 2)));
+        int bit_pos = i * 6;
+        int row = ((expanded[bit_pos / 8] >> (7 - (bit_pos % 8))) & 0x01) << 1 |
+                  ((expanded[(bit_pos + 5) / 8] >> (7 - ((bit_pos + 5) % 8))) & 0x01);
+        int col = ((expanded[(bit_pos + 1) / 8] >> (7 - ((bit_pos + 1) % 8))) & 0x01) << 3 |
+                  ((expanded[(bit_pos + 2) / 8] >> (7 - ((bit_pos + 2) % 8))) & 0x01) << 2 |
+                  ((expanded[(bit_pos + 3) / 8] >> (7 - ((bit_pos + 3) % 8))) & 0x01) << 1 |
+                  ((expanded[(bit_pos + 4) / 8] >> (7 - ((bit_pos + 4) % 8))) & 0x01);
+
+        // Get the S-box output
+        uint8_t sbox_value = S_BOX[i][row][col];
+
+        // Pack S-box outputs into 4 bytes
+        if (i % 2 == 0) {
+            sbox_out_hex[i / 2] = sbox_value << 4; // Higher 4 bits
+        } else {
+            sbox_out_hex[i / 2] |= sbox_value; // Lower 4 bits
+        }
     }
 
-    // Permutation (P)
-    permute(substituted, output, P_TABLE, 32);
+    // Step 4: Apply P_TABLE permutation to the S-box output
+    permute(sbox_out_hex, output, P_TABLE, 32);
 }
 
 // DES encryption/decryption
 void des(uint8_t *block, uint8_t *key, int mode) {
+    uint8_t left[4], right[4], tempRight[4];
+    uint8_t roundKeys[16][6] = {0};
 
+    // Apply the initial permutation to the block
+    uint8_t permutedBlock[8] = {0};
+    initial_permutation(block, permutedBlock);
+
+    // Split the block into left and right halves
+    memcpy(left, permutedBlock, 4);
+    memcpy(right, permutedBlock + 4, 4);
+
+    // Generate 16 round keys
+    key_schedule(key, roundKeys);
+
+    // Perform 16 rounds of DES
+    for (int i = 0; i < 16; i++) {
+        int round = (mode == 1) ? i : (15 - i);  // Choose round order based on mode
+
+        // Save the current right half
+        memcpy(tempRight, right, 4);
+
+        // Apply the Feistel function to the right half
+        uint8_t feistelOutput[4] = {0};
+        feistel(right, roundKeys[round], feistelOutput);
+
+        // XOR the Feistel output with the left half and store it in the new right half
+        for (int j = 0; j < 4; j++) {
+            right[j] = left[j] ^ feistelOutput[j];
+        }
+
+        // Move the old right half to the left half
+        memcpy(left, tempRight, 4);
+    }
+
+    // Combine left and right halves (reverse for decryption)
+    uint8_t preOutputBlock[8] = {0};
+    if (mode == 1) { // For encryption
+        memcpy(preOutputBlock, right, 4);
+        memcpy(preOutputBlock + 4, left, 4);
+    } else { // For decryption
+        memcpy(preOutputBlock, right, 4);
+        memcpy(preOutputBlock + 4, left, 4);
+    }
+
+    // Apply the final permutation
+    final_permutation(preOutputBlock, block);
+}
+
+int main() {
+    // Known test vector
+    /*
+    plaintext:123456ABCD132536
+    expected cipher:C0B7A8D05F3A829C
+    key = "AABB09182736CCDD"
+    */
+    uint8_t key[8] = {0xAA, 0xBB, 0x09, 0x18, 0x27, 0x36, 0xCC, 0xDD};
+    uint8_t plaintext[8] = {0x12, 0x34, 0x56, 0xAB, 0xCD, 0x13, 0x25, 0x36};
+    uint8_t expected_ciphertext[8] = {0xC0, 0xB7, 0xA8, 0xD0, 0x5F, 0x3A, 0x82, 0x9C};
+    uint8_t ciphertext[8];
+    uint8_t decrypted_text[8];
+
+    // Copy plaintext into ciphertext array for encryption
+    memcpy(ciphertext, plaintext, 8);
+
+    // Encrypt the plaintext
+    des(ciphertext, key, 1);
+    
+    // Check if encryption matches the expected ciphertext
+    if (memcmp(ciphertext, expected_ciphertext, 8) == 0) {
+        printf("Encryption passed: ciphertext matches expected output.\n");
+    } else {
+        printf("Encryption failed: ciphertext does not match expected output.\n");
+    }
+
+    // Copy the encrypted text to decrypted_text for decryption
+    memcpy(decrypted_text, ciphertext, 8);
+
+    // Decrypt the ciphertext
+    des(decrypted_text, key, 0);
+
+    // Check if decryption returns to original plaintext
+    if (memcmp(decrypted_text, plaintext, 8) == 0) {
+        printf("Decryption passed: decrypted text matches original plaintext.\n");
+    } else {
+        printf("Decryption failed: decrypted text does not match original plaintext.\n");
+    }
+
+    return 0;
 }

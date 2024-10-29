@@ -17,15 +17,22 @@ The project includes:
 
 ```plaintext
 DES_Project/
-├── inc/
-│   ├── des.h               # Header file for DES functions
-│   ├── utils.h             # Header file for utility functions
-├── src/
-│   ├── des.c               # Source file implementing DES algorithm
-│   ├── main.c              # Source file with the main function and CLI handling
-│   ├── utils.c             # Source file with utility functions
-├── Makefile                # Makefile for building the project
-└── README.md               # Project documentation
+├── build.bat                      # Batch file to build the project on Windows
+├── docs/                          # Directory containing documentation and specifications
+│   ├── fips46-3.pdf               # FIPS 46-3 standard document for the DES algorithm
+│   ├── project-1-specs.pdf        # Project specifications document
+│   ├── task-breakdown.pdf         # Document outlining the breakdown of tasks
+│   └── the-des-algorithm-illustrated.pdf  # Illustrated guide to the DES algorithm
+├── inc/                           # Directory for header files
+│   ├── des.h                      # Header file for DES functions
+│   └── utils.h                    # Header file for utility functions
+├── Makefile                       # Makefile for building the project on Linux
+├── plaintext.txt                  # Sample plaintext file for testing encryption
+├── README.md                      # Project documentation and instructions
+└── src/                           # Directory for source code files
+    ├── des.c                      # Source file implementing the DES algorithm
+    ├── main.c                     # Source file with the main function and CLI handling
+    └── utils.c                    # Source file with utility functions
 ```
 
 ---

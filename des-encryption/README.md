@@ -198,7 +198,7 @@ sudo apt-get install build-essential
 
 #### **Windows**
 
-- **GCC Compiler**: Install GCC for Windows. You can use [MinGW-w64](http://mingw-w64.org/doku.php/download) or [TDM-GCC](https://jmeubank.github.io/tdm-gcc/).
+- **GCC Compiler**: Install GCC for Windows. You can use [MinGW-w64](https://www.mingw-w64.org/downloads/) or [TDM-GCC](https://jmeubank.github.io/tdm-gcc/).
 - **Environment Variables**: Ensure that the path to `gcc.exe` is added to your system's `PATH` environment variable.
 - **Command Prompt**: Use the standard Command Prompt or PowerShell to run `build.bat`.
 

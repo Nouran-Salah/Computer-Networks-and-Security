@@ -41,22 +41,60 @@ DES_Project/
 
 ### **`inc/` Directory**
 
-- **`des.h`**: Contains function declarations for DES-related functions such as `des()`, `key_schedule()`, `initial_permutation()`, etc.
-- **`utils.h`**: Contains utility function declarations for functions such as `print_usage()`, `file_exists()`, `hex_to_bytes()`, etc.
+- **`des.h`**: Contains function declarations for DES-related functions such as `des()`, `key_schedule()`, `initial_permutation()`, `final_permutation()`, and other essential components of the DES algorithm.
+- **`utils.h`**: Contains utility function declarations for functions such as `print_usage()`, `file_exists()`, `hex_to_bytes()`, `bytes_to_hex()`, and other helper functions used throughout the project.
 
 ### **`src/` Directory**
 
-- **`des.c`**: Implements the DES algorithm, including key scheduling, initial permutation, final permutation, and Feistel functions.
-- **`main.c`**: Contains the main function that handles command-line arguments and drives the encryption and decryption processes.
-- **`utils.c`**: Implements utility functions such as file existence checking, hexadecimal key conversion, file handling, and user prompts.
+- **`des.c`**: Implements the DES algorithm, including key scheduling, initial permutation, final permutation, Feistel functions, and the main `des()` function that orchestrates the encryption and decryption processes.
+- **`main.c`**: Contains the `main` function that handles command-line arguments, user input, and drives the encryption and decryption workflows based on user commands.
+- **`utils.c`**: Implements utility functions such as checking if a file exists (`file_exists()`), converting hexadecimal keys to bytes (`hex_to_bytes()`), reading and writing files, displaying usage information (`print_usage()`), and other supportive tasks.
 
 ### **`Makefile`**
 
-- The Makefile automates the build process for the project. It compiles the source files and generates an executable file.
+- **Purpose**: Automates the build process for the project on Linux systems.
+- **Functionality**:
+  - Compiles the source files in the `src/` directory.
+  - Places the compiled object files in the `obj/` directory (created if it doesn't exist).
+  - Links the object files to generate the executable file named `des_encryption`.
+  - Provides a `clean` target to remove build artifacts.
+
+### **`build.bat`**
+
+- **Purpose**: Automates the build process for the project on Windows systems.
+- **Functionality**:
+  - Compiles the source files in the `src/` directory using GCC.
+  - Places the compiled object files in the `obj\` directory (created if it doesn't exist).
+  - Links the object files to generate the executable file named `des_encryption.exe`.
+  - Echoes messages to indicate the progress of the build process.
+
+### **`docs/` Directory**
+
+- **Contains documentation and reference materials relevant to the project**:
+  - **`fips46-3.pdf`**: The official FIPS 46-3 standard document for the Data Encryption Standard (DES), providing detailed specifications of the algorithm.
+  - **`project-1-specs.pdf`**: The project's specification document outlining requirements, objectives, and deliverables.
+  - **`task-breakdown.pdf`**: A document that breaks down the project into tasks and milestones, helping in project management and tracking progress.
+  - **`the-des-algorithm-illustrated.pdf`**: An illustrated guide that explains the DES algorithm visually, aiding in understanding the encryption and decryption processes.
+
+### **`plaintext.txt`**
+
+- **Purpose**: A sample plaintext file used for testing the encryption and decryption functionalities of the program.
+- **Contents**: Contains text data that can be encrypted using the DES algorithm implemented in the project. Serves as an example input for demonstration and testing purposes.
 
 ### **`README.md`**
 
-- This file provides comprehensive documentation for the project.
+- **Purpose**: Provides comprehensive documentation for the project.
+- **Contents**:
+  - **Project Overview**: An introduction to the project, its goals, and its significance.
+  - **Installation Instructions**: Steps on how to set up the development environment and dependencies.
+  - **Building the Project**:
+    - Instructions for building the project on **Linux** using the `Makefile`.
+    - Instructions for building the project on **Windows** using `build.bat`.
+  - **Usage Guide**: How to run the executable, command-line options, and examples of encrypting and decrypting files.
+  - **Project Structure**: An outline of the project's directory structure and explanations of each file and directory.
+  - **Contributing**: Guidelines for contributing to the project, if applicable.
+  - **License Information**: Details about the project's license.
+  - **References**: Links to resources and documents in the `docs/` directory for further reading.
 
 ---
 

@@ -71,6 +71,58 @@ int handle_ciphertext_file(const char *filename);
 void hex_to_bytes(const char *hex, uint8_t *key);
 
 /**
+ * @brief Adds PKCS#5/PKCS#7 padding to a block for 8-byte alignment.
+ * 
+ * This function adds padding to the given block to ensure that its size is a 
+ * multiple of 8 bytes, as required by DES encryption. The padding is done 
+ * according to the PKCS#5/PKCS#7 scheme, where each padding byte contains 
+ * the value of the padding length.
+ * 
+ * @param[in,out] block A pointer to the block that needs padding.
+ *                      It must be large enough to hold the padded data.
+ * @param[in,out] block_size A pointer to the current size of the block, 
+ *                           which will be updated to reflect the new size 
+ *                           after padding.
+ * 
+ * @note The padding length is calculated as 8 - (block_size % 8). If the 
+ *       block is already 8 bytes long, an additional block of 8 padding 
+ *       bytes is added.
+ * 
+ * @example
+ * uint8_t block[16] = {0x12, 0x34, 0x56, 0x78, 0x9A};
+ * size_t block_size = 5;
+ * add_padding(block, &block_size);
+ * // block now contains: 0x12 0x34 0x56 0x78 0x9A 0x03 0x03 0x03
+ * // block_size is updated to 8
+ */
+void add_padding(uint8_t *block, size_t *block_size);
+
+/**
+ * @brief Removes PKCS#5/PKCS#7 padding from a block.
+ * 
+ * This function removes padding from the given block according to the 
+ * PKCS#5/PKCS#7 padding scheme. The padding length is determined by the 
+ * value of the last byte in the block, and the block size is adjusted 
+ * accordingly.
+ * 
+ * @param[in,out] block A pointer to the block from which padding will be removed.
+ * @param[in,out] block_size A pointer to the current size of the block,
+ *                           which will be updated to reflect the new size 
+ *                           after removing the padding.
+ * 
+ * @note The function ensures that the padding length is valid (between 1 and 8).
+ *       If the padding length is invalid, no changes are made to the block size.
+ * 
+ * @example
+ * uint8_t block[8] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0x03, 0x03, 0x03};
+ * size_t block_size = 8;
+ * remove_padding(block, &block_size);
+ * // block now contains: 0x12 0x34 0x56 0x78 0x9A
+ * // block_size is updated to 5
+ */
+void remove_padding(uint8_t *block, size_t *block_size);
+
+/**
  * @brief Processes files for encryption or decryption using the DES algorithm.
  * 
  * This function reads blocks of data from the input file (plaintext or ciphertext),

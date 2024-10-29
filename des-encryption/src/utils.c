@@ -2,6 +2,12 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef _WIN32
+#include <io.h>      // For _chsize()
+#include <windows.h> // For _fileno()
+#else
+#include <unistd.h>  // For ftruncate() and fileno()
+#endif
 #include "utils.h"
 #include "des.h"
 
@@ -81,40 +87,38 @@ void process_files(const char *input_file, const char *output_file, uint8_t *key
 
     uint8_t block[8];
     size_t block_size;
-    int last_char_newline = 0;
-
-    if (mode == 0) { // Decryption mode
-        // Check if the original plaintext had a newline at the end
-        FILE *plain = fopen(output_file, "rb");
-        if (plain) {
-            fseek(plain, -1, SEEK_END);
-            char last_char = fgetc(plain);
-            if (last_char == '\n') {
-                last_char_newline = 1; // Set flag if original file had a newline
-            }
-            fclose(plain);
-        }
-    }
+    size_t last_block_size = 0;
 
     while ((block_size = fread(block, 1, 8, in)) > 0) {
-        if (mode == 1) { // Encrypt mode
-            if (block_size < 8) {
-                add_padding(block, &block_size);
-            }
+        last_block_size = block_size;
+
+        // Encrypt mode: Add padding if last block is less than 8 bytes
+        if (mode == 1 && block_size < 8) {
+            add_padding(block, &block_size);
         }
 
-        des(block, key, mode); // Perform encryption or decryption
+        // Perform DES encryption or decryption
+        des(block, key, mode);
 
-        if (mode == 0 && feof(in)) { // Decrypt mode on the last block
-            remove_padding(block, &block_size);
-        }
-
-        fwrite(block, 1, block_size, out); // Write the processed block
+        fwrite(block, 1, block_size, out);
     }
 
-    // Add a newline to the decrypted file if it was present in the original plaintext
-    if (mode == 0 && last_char_newline) {
-        fputc('\n', out);
+    // Decrypt mode: Remove padding from the last block
+    if (mode == 0 && last_block_size == 8) {
+        fseek(out, -8, SEEK_END);
+        fread(block, 1, 8, out);
+        remove_padding(block, &last_block_size);
+
+        fseek(out, -8, SEEK_END);
+        fwrite(block, 1, last_block_size, out);
+
+#ifdef _WIN32
+        // Use _chsize() for Windows
+        _chsize(_fileno(out), ftell(out));
+#else
+        // Use ftruncate() for Unix-like systems
+        ftruncate(fileno(out), ftell(out));
+#endif
     }
 
     fclose(in);

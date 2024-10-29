@@ -1,7 +1,7 @@
 # Makefile for building DES encryption project
 
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99
+CFLAGS = -Wall -Wextra -std=c99 -D_POSIX_C_SOURCE=200112L -Iinc
 INCLUDE_DIR = inc
 SRC_DIR = src
 OBJ_DIR = obj

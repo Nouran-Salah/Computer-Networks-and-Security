@@ -156,21 +156,20 @@ void left_shift(uint32_t *half, int shifts) {
 
 // Key scheduling: Generate 16 round keys
 void key_schedule(uint8_t *key, uint8_t round_keys[16][6]) {
-    uint64_t med_output = 0;
+    uint8_t permuted_key[7] = {0}; // 56 bits / 8 = 7 bytes
 
-    // Apply PC-1 permutation
-    for (int i = 0; i < 56; i++) {
-        int bit_pos = PC1[i] - 1; // PC1 is 1-based
-        uint64_t bit = (key[bit_pos / 8] >> (7 - (bit_pos % 8))) & 1; // Extract bit
-        med_output |= bit << (55 - i); // Place in med_output
-    }
+    // Apply PC-1 permutation to the key
+    permute(key, permuted_key, PC1, 56);
 
-    // Split the 56-bit med_output into two 28-bit halves
-    uint32_t first_half = (med_output >> 28) & 0x0FFFFFFF;
-    uint32_t second_half = med_output & 0x0FFFFFFF;
-
-    // Initialize round_keys array to zero
-    memset(round_keys, 0, 16 * 6 * sizeof(uint8_t));
+    // Split the 56-bit permuted_key into two 28-bit halves
+    uint32_t first_half = ((uint32_t)permuted_key[0] << 20) |
+                          ((uint32_t)permuted_key[1] << 12) |
+                          ((uint32_t)permuted_key[2] << 4)  |
+                          ((uint32_t)permuted_key[3] >> 4);
+    uint32_t second_half = ((uint32_t)(permuted_key[3] & 0x0F) << 24) |
+                           ((uint32_t)permuted_key[4] << 16) |
+                           ((uint32_t)permuted_key[5] << 8)  |
+                           (uint32_t)permuted_key[6];
 
     // Generate 16 round keys
     for (int round = 0; round < 16; round++) {
@@ -179,14 +178,17 @@ void key_schedule(uint8_t *key, uint8_t round_keys[16][6]) {
         left_shift(&second_half, SHIFTS[round]);
 
         // Combine halves into a 56-bit value
-        uint64_t combined = ((uint64_t)first_half << 28) | second_half;
+        uint8_t combined[7] = {0};
+        combined[0] = (first_half >> 20) & 0xFF;
+        combined[1] = (first_half >> 12) & 0xFF;
+        combined[2] = (first_half >> 4) & 0xFF;
+        combined[3] = ((first_half & 0x0F) << 4) | ((second_half >> 24) & 0x0F);
+        combined[4] = (second_half >> 16) & 0xFF;
+        combined[5] = (second_half >> 8) & 0xFF;
+        combined[6] = second_half & 0xFF;
 
-        // Apply PC-2 permutation to generate round key
-        for (int j = 0; j < 48; j++) {
-            int bit_pos = PC2[j] - 1; // PC2 is 1-based
-            uint8_t bit = (combined >> (55 - bit_pos)) & 1; // Extract bit
-            round_keys[round][j / 8] |= bit << (7 - (j % 8)); // Set bit in round key
-        }
+        // Apply PC-2 permutation to generate the round key
+        permute(combined, round_keys[round], PC2, 48);
     }
 }
 

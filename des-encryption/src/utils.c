@@ -13,9 +13,13 @@
 
 // Helper function to print usage prompt
 void print_usage() {
-    printf("Usage: ./program e|d <key> <plaintext_file> <ciphertext_file>\n");
-    printf("e: encrypt, d: decrypt\n");
-    printf("Example: ./program e 0123456789ABCDEF plaintext.txt ciphertext.bin\n");
+    printf("Usage: ./program -m <e|d> -k <key> -f <keyfile> <input_file> <output_file>\n");
+    printf("Options:\n");
+    printf("  -m <e|d>       Mode: 'e' for encryption, 'd' for decryption\n");
+    printf("  -k <key>       Key as a 16-character hexadecimal string\n");
+    printf("  -f <keyfile>   Key file (either 8-byte binary or 16-character hex string)\n");
+    printf("Example:\n");
+    printf("  ./program -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin\n");
 }
 
 // Function to check if a file exists
@@ -45,6 +49,35 @@ void hex_to_bytes(const char *hex, uint8_t *key) {
     for (int i = 0; i < 8; i++) {
         sscanf(hex + 2 * i, "%2hhx", &key[i]);
     }
+}
+
+// Function to load key from a file (either hex string or binary format)
+int load_key_from_file(const char *keyfile, uint8_t *key) {
+    FILE *file = fopen(keyfile, "rb");
+    if (!file) {
+        perror("Error opening key file");
+        return 0;
+    }
+
+    // Try reading the key as raw bytes (binary format)
+    size_t bytes_read = fread(key, 1, 8, file);
+    if (bytes_read == 8) {
+        fclose(file);
+        return 1; // Successfully read 8-byte key in binary format
+    }
+
+    // If only part of the file is read, or more than 8 bytes, reset and read as hex string
+    fseek(file, 0, SEEK_SET);
+    char hex_key[17] = {0}; // For storing 16 hex characters + null terminator
+    if (fread(hex_key, 1, 16, file) == 16) {
+        fclose(file);
+        hex_to_bytes(hex_key, key); // Convert hex string to bytes
+        return 1;
+    }
+
+    fclose(file);
+    printf("Error: Key file must contain exactly 8 bytes (binary) or 16 hex characters.\n");
+    return 0;
 }
 
 // PKCS#5/PKCS#7 padding for 8-byte blocks
@@ -108,9 +141,6 @@ void process_files(const char *input_file, const char *output_file, uint8_t *key
         fseek(out, -8, SEEK_END);
         fread(block, 1, 8, out);
         remove_padding(block, &last_block_size);
-
-        fseek(out, -8, SEEK_END);
-        fwrite(block, 1, last_block_size, out);
 
 #ifdef _WIN32
         // Use _chsize() for Windows

@@ -15,11 +15,12 @@
 void print_usage() {
     printf("Usage: ./program -m <e|d> -k <key> -f <keyfile> <input_file> <output_file>\n");
     printf("Options:\n");
-    printf("  -m <e|d>       Mode: 'e' for encryption, 'd' for decryption\n");
-    printf("  -k <key>       Key as a 16-character hexadecimal string\n");
-    printf("  -f <keyfile>   Key file (either 8-byte binary or 16-character hex string)\n");
+    printf("  -m, --mode <e|d>       Mode: 'e' for encryption, 'd' for decryption\n");
+    printf("  -k, --key <key>        Key as a 16-character hexadecimal string\n");
+    printf("  -f, --keyfile <file>   Key file (either 8-byte binary or 16-character hex string)\n");
     printf("Example:\n");
     printf("  ./program -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin\n");
+    printf("  ./program --mode e --keyfile keyfile.bin plaintext.txt ciphertext.bin\n");
 }
 
 // Function to check if a file exists

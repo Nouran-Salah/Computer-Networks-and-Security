@@ -1,10 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include "utils.h"
-#include "des.h"
-
 int main(int argc, char *argv[]) {
     int opt;
     char *mode = NULL;
@@ -12,8 +5,16 @@ int main(int argc, char *argv[]) {
     char *keyfile = NULL;
     int mode_value = -1;
 
+    // Define long options
+    static struct option long_options[] = {
+        {"mode", required_argument, 0, 'm'},
+        {"key", required_argument, 0, 'k'},
+        {"keyfile", required_argument, 0, 'f'},
+        {0, 0, 0, 0}
+    };
+
     // Parse command-line options
-    while ((opt = getopt(argc, argv, "m:k:f:")) != -1) {
+    while ((opt = getopt_long(argc, argv, "m:k:f:", long_options, NULL)) != -1) {
         switch (opt) {
             case 'm':
                 mode = optarg;

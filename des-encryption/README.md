@@ -2,13 +2,13 @@
 
 ## **Overview**
 
-This project implements the **Data Encryption Standard (DES)** algorithm for encrypting and decrypting files. The DES algorithm processes 64-bit data blocks using a 56-bit key and performs 16 rounds of Feistel structure transformations. This project provides both encryption and decryption functionalities, along with error handling for file operations, user prompts for overwriting/clearing files, and command-line usage.
+This project implements the **Data Encryption Standard (DES)** algorithm for encrypting and decrypting files. The DES algorithm processes 64-bit data blocks using a 56-bit key and performs 16 rounds of Feistel structure transformations. This project includes encryption and decryption functionalities, error handling for file operations, user prompts for overwriting files, and a flexible command-line interface that supports both short and long options.
 
-The project includes:
+Key features:
 
 - Encryption and decryption of files
-- Command-line interface for user interaction
-- Handling of hexadecimal keys
+- Command-line interface for user interaction with short and long options
+- Handling of hexadecimal keys and file-based keys
 - File error handling and warnings for existing files
 
 ---
@@ -18,6 +18,7 @@ The project includes:
 ```plaintext
 DES_Project/
 ├── build.bat                      # Batch file to build the project on Windows
+├── clean.bat                      # Batch file to clean up build artifacts on Windows
 ├── docs/                          # Directory containing documentation and specifications
 │   ├── fips46-3.pdf               # FIPS 46-3 standard document for the DES algorithm
 │   ├── project-1-specs.pdf        # Project specifications document
@@ -101,9 +102,9 @@ DES_Project/
 ## **Features**
 
 1. **DES Algorithm**: Implements the full DES algorithm including initial and final permutation, Feistel rounds, key scheduling, and S-box substitutions.
-2. **Command-Line Interface (CLI)**: Allows users to provide inputs for encryption and decryption via command-line arguments.
+2. **Command-Line Interface (CLI)**: Allows users to provide inputs for encryption and decryption via command-line arguments with both short and long options.
 3. **File Handling**: Supports reading plaintext or ciphertext from files and writing the output to files. It also prompts users for handling existing output files.
-4. **Hexadecimal Key Input**: Takes an 8-byte (64-bit) key in hexadecimal format from the command line.
+4. **Hexadecimal Key Input**: Takes an 8-byte (64-bit) key in hexadecimal format or as a file (binary or hexadecimal) from the command line.
 
 ---
 
@@ -113,14 +114,15 @@ DES_Project/
 
 ```bash
 # On Linux
-./des_encryption <mode> <key> <input_file> <output_file>
+./des_encryption -m <mode> -k <key> -f <keyfile> <input_file> <output_file>
 
 # On Windows
-des_encryption.exe <mode> <key> <input_file> <output_file>
+des_encryption.exe -m <mode> -k <key> -f <keyfile> <input_file> <output_file>
 ```
 
-- **`mode`**: Either `"e"` for encryption or `"d"` for decryption.
-- **`key`**: An 8-byte hexadecimal key (e.g., `0123456789ABCDEF`).
+- **`mode`** (`-m` or `--mode`): Either `"e"` for encryption or `"d"` for decryption.
+- **`key`** (`-k` or `--key`): An 8-byte hexadecimal key (e.g., `0123456789ABCDEF`).
+- **`keyfile`** (`-f` or `--keyfile`): Path to a file containing an 8-byte key (either in binary or 16-character hex string).
 - **`input_file`**: The file to be encrypted or decrypted.
 - **`output_file`**: The file where the output (ciphertext for encryption, plaintext for decryption) will be saved.
 
@@ -128,33 +130,29 @@ des_encryption.exe <mode> <key> <input_file> <output_file>
 
 ```bash
 # On Linux
-./des_encryption e 0123456789ABCDEF plaintext.txt ciphertext.bin
+./des_encryption -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin
 
 # On Windows
-des_encryption.exe e 0123456789ABCDEF plaintext.txt ciphertext.bin
+des_encryption.exe -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin
 ```
-
-This command encrypts `plaintext.txt` using the key `0123456789ABCDEF` and saves the result to `ciphertext.bin`.
 
 ### **Decryption Example**
 
 ```bash
 # On Linux
-./des_encryption d 0123456789ABCDEF ciphertext.bin decrypted.txt
+./des_encryption -m d -k 0123456789ABCDEF ciphertext.bin decrypted.txt
 
 # On Windows
-des_encryption.exe d 0123456789ABCDEF ciphertext.bin decrypted.txt
+des_encryption.exe -m d -k 0123456789ABCDEF ciphertext.bin decrypted.txt
 ```
 
-This command decrypts `ciphertext.bin` using the key `0123456789ABCDEF` and saves the result to `decrypted.txt`.
+### **Using a Key File**
 
----
+```bash
+./des_encryption -m e -f keyfile.bin plaintext.txt ciphertext.bin
+```
 
-## **Key Input Format**
-
-The key must be provided as a **16-character hexadecimal string** (representing 8 bytes). Each pair of hexadecimal digits corresponds to one byte of the DES key.
-
-Example: `0123456789ABCDEF` is a valid 64-bit DES key.
+This command uses a key from `keyfile.bin` instead of directly specifying it with `-k`.
 
 ---
 
@@ -171,42 +169,9 @@ Warning: ciphertext.bin already exists. Append or (c)lear the contents? (a/c):
 
 ---
 
-## **File Not Found Handling**
-
-If the input file does not exist, the program will display an error message and terminate:
-
-```plaintext
-Error: Input file does not exist.
-```
-
----
-
 ## **Build Instructions**
 
-### **Prerequisites**
-
-#### **Linux**
-
-- **GCC Compiler**: Ensure that GCC is installed on your system.
-- **Make Utility**: The `make` utility is required to use the provided `Makefile`.
-
-You can install them using your distribution's package manager. For example, on Ubuntu:
-
-```bash
-sudo apt-get install build-essential
-```
-
-#### **Windows**
-
-- **GCC Compiler**: Install GCC for Windows. You can use [MinGW-w64](https://www.mingw-w64.org/downloads/) or [TDM-GCC](https://jmeubank.github.io/tdm-gcc/).
-- **Environment Variables**: Ensure that the path to `gcc.exe` is added to your system's `PATH` environment variable.
-- **Command Prompt**: Use the standard Command Prompt or PowerShell to run `build.bat`.
-
-**Note**: If you are using MinGW-w64, during installation, select the option for "mingw32-base" and "mingw32-gcc-g++" to install the necessary compilers.
-
-### **Building the Project**
-
-#### **On Linux**
+### **Linux**
 
 To build the project, navigate to the project’s root directory and run:
 
@@ -214,148 +179,47 @@ To build the project, navigate to the project’s root directory and run:
 make
 ```
 
-This will compile all the source files (`des.c`, `main.c`, `utils.c`) and generate the `des_encryption` executable.
+### **Windows**
 
-#### **On Windows**
-
-To build the project on Windows, ensure you have installed GCC as described in the prerequisites. Then, navigate to the project's root directory and run:
+Ensure you have installed GCC (e.g., MinGW-w64) and run:
 
 ```batch
 build.bat
 ```
 
-This batch script will compile the source files and generate the `des_encryption.exe` executable.
-
-### **Cleaning Up**
-
-#### **On Linux**
-
-To remove all the compiled object files and the executable, run:
-
-```bash
-make clean
-```
-
-#### **On Windows**
-
-To clean up build artifacts on Windows, you can manually delete the `obj` directory and the executable, or run:
-
-```batch
-clean.bat
-```
+To remove compiled artifacts, run `make clean` (Linux) or `clean.bat` (Windows).
 
 ---
 
 ## **Running the Program**
 
-After building the project, you can run the executable from the command line.
-
-### **On Linux**
-
-```bash
-./des_encryption <mode> <key> <input_file> <output_file>
-```
-
-### **On Windows**
-
-```batch
-des_encryption.exe <mode> <key> <input_file> <output_file>
-```
-
----
-
-## **Sample Input and Output**
-
-### **Example Input:**
-
-- **Key**: `0123456789ABCDEF`
-- **Plaintext File** (`plaintext.txt`):
-
-  ```plaintext
-  Hello, this is a test message.
-  ```
-
-### **Encryption Command:**
+After building, you can run:
 
 ```bash
 # On Linux
-./des_encryption e 0123456789ABCDEF plaintext.txt ciphertext.bin
+./des_encryption -m e -k 0123456789ABCDEF plaintext.txt
+
+ ciphertext.bin
 
 # On Windows
-des_encryption.exe e 0123456789ABCDEF plaintext.txt ciphertext.bin
+des_encryption.exe -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin
 ```
-
-### **Example Output (Ciphertext in Hexadecimal):**
-
-- **Ciphertext File** (`ciphertext.bin`):
-
-  The contents of `ciphertext.bin` will be binary data. To view it in hexadecimal, you can use a hex editor or convert it to hex representation. On Linux, you can use:
-
-  ```bash
-  xxd ciphertext.bin
-  ```
-
-  On Windows, you can use a tool like `CertUtil`:
-
-  ```batch
-  certutil -dump ciphertext.bin
-  ```
-
-### **Decryption Command:**
-
-```bash
-# On Linux
-./des_encryption d 0123456789ABCDEF ciphertext.bin decrypted.txt
-
-# On Windows
-des_encryption.exe d 0123456789ABCDEF ciphertext.bin decrypted.txt
-```
-
-- After decryption, `decrypted.txt` should contain the original message:
-
-  ```plaintext
-  Hello, this is a test message.
-  ```
 
 ---
 
 ## **Error Handling**
 
 1. **Invalid Number of Arguments**:
-
-   - If the user does not provide exactly 5 arguments (including the program name), the program will display usage instructions:
-
-     ```plaintext
-     Usage: ./des_encryption e|d <key> <input_file> <output_file>
-     ```
+   - Displays usage instructions if the correct number of arguments is not provided.
 
 2. **Invalid Mode**:
-
-   - If the user provides an invalid mode (anything other than "e" for encryption or "d" for decryption), the program will show an error message.
+   - Ensures mode is `"e"` or `"d"` only; otherwise, shows an error.
 
 3. **Invalid Key Format**:
-
-   - If the key is not provided in hexadecimal format or is of incorrect length, the program will exit with an error.
+   - Validates that the key is in hexadecimal format and the correct length.
 
 4. **File Errors**:
-
-   - If the input file cannot be opened, an error message is displayed.
-
-   - If the output file cannot be created or written to, an error message is displayed.
-
----
-
-## **Development Workflow**
-
-### **Team Member Tasks**
-
-The project was divided into several tasks for team members:
-
-1. **Task 1: Initial Permutation (IP) and Final Permutation (FP)** – Implemented in `des.c`.
-2. **Task 2: Key Scheduling and Round Key Generation** – Implemented in `des.c`.
-3. **Task 3: Feistel Function and S-Box Substitution** – Implemented in `des.c`.
-4. **Task 4: DES Encryption/Decryption Logic** – Implemented in `des.c`.
-5. **Task 5: File Handling, Command-Line Interface, and Build System** – Implemented in `main.c` and `utils.c`.
+   - Displays an error if input or output files cannot be opened.
 
 ---
 

@@ -1,5 +1,7 @@
 digraph CallGraph {
-    node [shape=box];
+    rankdir=LR;
+    node [shape=box, style=filled, fillcolor=lightblue, fontname=Arial, fontsize=10];
+    edge [color=black, arrowsize=0.7];
     "main" -> "getopt_long";
     "getopt_long" -> "strcmp";
     "strcmp" -> "print_usage";

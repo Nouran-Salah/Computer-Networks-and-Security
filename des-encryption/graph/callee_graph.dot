@@ -1,5 +1,7 @@
 digraph CalleeGraph {
-    node [shape=box];
+    rankdir=LR;
+    node [shape=box, style=filled, fillcolor=lightblue, fontname=Arial, fontsize=10];
+    edge [color=black, arrowsize=0.7];
     "getopt_long" -> "main";
     "strcmp" -> "getopt_long";
     "print_usage" -> "strcmp";

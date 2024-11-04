@@ -1,0 +1,40 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# Default settings for all files
+[*]
+# Set default charset to UTF-8
+charset = utf-8
+# Set end of line to LF (Unix-style)
+end_of_line = lf
+# Ensure files end with a newline
+insert_final_newline = true
+# Trim trailing whitespace on save
+trim_trailing_whitespace = true
+
+# Settings for C/C++ source files
+[*.{c,cpp,h,hpp}]
+# Use 4 spaces for indentation
+indent_style = space
+indent_size = 4
+
+# Settings for Makefiles
+[Makefile]
+# Use tabs for indentation in Makefiles
+indent_style = tab
+
+# Settings for Python files (e.g., scripts in your project)
+[*.py]
+# Use 4 spaces for indentation in Python files
+indent_style = space
+indent_size = 4
+
+# Settings for Markdown files (e.g., README.md)
+[*.md]
+# Use 2 spaces for indentation in Markdown files
+indent_style = space
+indent_size = 2
+# Trim trailing whitespace but not in Markdown files, as it may have meaning
+trim_trailing_whitespace = false

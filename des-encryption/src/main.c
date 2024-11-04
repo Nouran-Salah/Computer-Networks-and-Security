@@ -18,11 +18,12 @@ int main(int argc, char *argv[]) {
         {"mode", required_argument, 0, 'm'},
         {"key", required_argument, 0, 'k'},
         {"keyfile", required_argument, 0, 'f'},
+        {"help", no_argument, 0, 'h'},
         {0, 0, 0, 0}
     };
 
     // Parse command-line options
-    while ((opt = getopt_long(argc, argv, "m:k:f:", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "m:k:f:h", long_options, NULL)) != -1) {
         switch (opt) {
             case 'm':
                 mode = optarg;
@@ -41,6 +42,10 @@ int main(int argc, char *argv[]) {
             case 'f':
                 keyfile = optarg; // Key as file (binary or hex)
                 break;
+            case 'h':
+                print_usage();
+                return EXIT_SUCCESS;
+            case '?':  // Unknown option
             default:
                 print_usage();
                 return EXIT_FAILURE;

@@ -16,24 +16,38 @@ Key features:
 ## **Project Structure**
 
 ```plaintext
-DES_Project/
-├── build.bat                      # Batch file to build the project on Windows
-├── clean.bat                      # Batch file to clean up build artifacts on Windows
-├── docs/                          # Directory containing documentation and specifications
-│   ├── fips46-3.pdf               # FIPS 46-3 standard document for the DES algorithm
-│   ├── project-1-specs.pdf        # Project specifications document
-│   ├── task-breakdown.pdf         # Document outlining the breakdown of tasks
-│   └── the-des-algorithm-illustrated.pdf  # Illustrated guide to the DES algorithm
-├── inc/                           # Directory for header files
+des-encryption/
+├── build/                         # Compiled output and generated graph images
+│   ├── callgraph.png              # PNG image of the caller graph
+│   ├── callee_graph.png           # PNG image of the callee graph
+├── docs/                          # Documentation and project specifications
+│   ├── fips46-3.pdf               # FIPS standard document for DES
+│   ├── project-1-specs.pdf        # Project specifications
+│   └── the-des-algorithm-illustrated.pdf  # Visual guide to DES algorithm
+├── graph/                         # Intermediate graph files
+│   ├── callgraph.dot              # Generated DOT file for caller graph
+│   ├── callgraph.txt              # Caller graph output from `cflow`
+│   ├── callee_graph.dot           # Generated DOT file for callee graph
+│   ├── callee_graph.txt           # Callee graph output from `cflow`
+│   └── scripts/                   # Scripts for generating graphs
+│       ├── cflow_to_callee_dot.py # Script to convert cflow to callee graph in .dot
+│       ├── cflow_to_caller_dot.py # Script to convert cflow to caller graph in .dot
+│       └── generate_graphs.sh     # Script to automate graph generation
+├── inc/                           # Header files
 │   ├── des.h                      # Header file for DES functions
 │   └── utils.h                    # Header file for utility functions
-├── Makefile                       # Makefile for building the project on Linux
-├── plaintext.txt                  # Sample plaintext file for testing encryption
+├── src/                           # Source files for the project
+│   ├── des.c                      # Implementation of the DES algorithm
+│   ├── main.c                     # Main function for CLI handling
+│   └── utils.c                    # Utility functions
+├── test/                          # Directory for test cases and test files
+│   ├── test_input.txt             # Sample input file for testing encryption
+│   ├── test_key.txt               # Sample key file for testing
+│   └── test_output.txt            # Expected output file for validation
+├── .gitignore                     # Ignore build, generated files, and temporary files
+├── Makefile                       # Makefile for building the project
 ├── README.md                      # Project documentation and instructions
-└── src/                           # Directory for source code files
-    ├── des.c                      # Source file implementing the DES algorithm
-    ├── main.c                     # Source file with the main function and CLI handling
-    └── utils.c                    # Source file with utility functions
+└── plaintext.txt                  # Sample plaintext file for testing encryption (could be moved to `test/`)
 ```
 
 ---
@@ -210,12 +224,15 @@ des_encryption.exe -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin
 ## **Error Handling**
 
 1. **Invalid Number of Arguments**:
+
    - Displays usage instructions if the correct number of arguments is not provided.
 
 2. **Invalid Mode**:
+
    - Ensures mode is `"e"` or `"d"` only; otherwise, shows an error.
 
 3. **Invalid Key Format**:
+
    - Validates that the key is in hexadecimal format and the correct length.
 
 4. **File Errors**:

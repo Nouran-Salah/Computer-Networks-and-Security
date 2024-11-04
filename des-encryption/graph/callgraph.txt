@@ -1,0 +1,52 @@
+main() <int main (int argc, char *argv[]) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/main.c:9>:
+    getopt_long()
+    strcmp()
+    print_usage() <void print_usage () at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:15>:
+        printf()
+    printf()
+    load_key_from_file() <int load_key_from_file (const char *keyfile, uint8_t *key) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:56>:
+        fopen()
+        perror()
+        fread()
+        fclose()
+        fseek()
+        hex_to_bytes() <void hex_to_bytes (const char *hex, uint8_t *key) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:49>
+        printf()
+    strlen()
+    hex_to_bytes() <void hex_to_bytes (const char *hex, uint8_t *key) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:49>
+    file_exists() <int file_exists (const char *filename) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:27>:
+        fopen()
+        fclose()
+    handle_ciphertext_file() <int handle_ciphertext_file (const char *filename) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:37>:
+        file_exists() <int file_exists (const char *filename) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:27>:
+            fopen()
+            fclose()
+        printf()
+        scanf()
+    fopen()
+    perror()
+    fclose()
+    process_files() <void process_files (const char *input_file, const char *output_file, uint8_t *key, int mode) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:107>:
+        fopen()
+        perror()
+        exit()
+        fclose()
+        fread()
+        add_padding() <void add_padding (uint8_t *block, size_t *block_size) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:85>:
+        des() <void des (uint8_t *block, uint8_t *key, int mode) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/des.c:234>:
+            initial_permutation() <void initial_permutation (uint8_t *input, uint8_t *output) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/des.c:136>:
+                permute() <void permute (const uint8_t *input, uint8_t *output, const int *table, int size) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/des.c:123>:
+                    memset()
+            memcpy()
+            key_schedule() <void key_schedule (uint8_t *key, uint8_t round_keys[16][6]) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/des.c:158>:
+                permute() <void permute (const uint8_t *input, uint8_t *output, const int *table, int size) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/des.c:123>:
+                    memset()
+            final_permutation() <void final_permutation (uint8_t *input, uint8_t *output) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/des.c:140>:
+                permute() <void permute (const uint8_t *input, uint8_t *output, const int *table, int size) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/des.c:123>:
+                    memset()
+        fwrite()
+        fseek()
+        remove_padding() <void remove_padding (uint8_t *block, size_t *block_size) at /home/mahmoud/Computer-Networks-and-Security/des-encryption/src/utils.c:96>:
+        ftell()
+        ftruncate()
+        fileno()

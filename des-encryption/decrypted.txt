@@ -1,4 +1,0 @@
-The quick brown fox jumps over the lazy dog.
-This is a test message for DES encryption.
-DES is a symmetric-key algorithm for data encryption.
-

@@ -7,7 +7,8 @@ SRC_DIR = src
 OBJ_DIR = obj
 INCLUDE_DIR = inc
 SCRIPT_DIR = graph/scripts
-BUILD_DIR = build
+GRAPH_IMAGES_DIR = graph_images
+GRAPH_DIR = graph
 
 # Target executable
 TARGET = des_encryption
@@ -33,8 +34,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 # Generate documentation (call and callee graphs)
 docs:
+	@mkdir -p $(GRAPH_IMAGES_DIR)
 	@bash $(SCRIPT_DIR)/generate_graphs.sh
 
 # Clean up build artifacts and generated files
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET) $(BUILD_DIR)/*.png $(BUILD_DIR)/*.dot $(BUILD_DIR)/*.txt
+	rm -rf $(OBJ_DIR) $(TARGET)
+	rm -f $(GRAPH_IMAGES_DIR)/*.png
+	rm -f $(GRAPH_DIR)/*.dot $(GRAPH_DIR)/*.txt

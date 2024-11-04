@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Process the files for encryption or decryption
+    // Process the files for encryption or decryption with padding handling
     process_files(input_file, output_file, des_key, mode_value);
 
     printf("%s successful!\n", (mode_value == 1) ? "Encryption" : "Decryption");

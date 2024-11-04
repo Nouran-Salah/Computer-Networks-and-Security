@@ -19,8 +19,8 @@ void print_usage() {
     printf("  -k, --key <key>        Key as a 16-character hexadecimal string\n");
     printf("  -f, --keyfile <file>   Key file (either 8-byte binary or 16-character hex string)\n");
     printf("Example:\n");
-    printf("  ./program -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin\n");
-    printf("  ./program --mode e --keyfile keyfile.bin plaintext.txt ciphertext.bin\n");
+    printf("  ./des_encryption -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin\n");
+    printf("  ./des_encryption --mode e --keyfile keyfile.bin plaintext.txt ciphertext.bin\n");
 }
 
 // Function to check if a file exists
@@ -104,9 +104,10 @@ void remove_padding(uint8_t *block, size_t *block_size) {
 }
 
 // Function to process files for encryption or decryption
+// Function to process files for encryption or decryption
 void process_files(const char *input_file, const char *output_file, uint8_t *key, int mode) {
     FILE *in = fopen(input_file, "rb");
-    FILE *out = fopen(output_file, (mode == 1) ? "ab" : "wb");
+    FILE *out = fopen(output_file, "wb");
 
     if (!in) {
         perror("Error opening input file");
@@ -121,33 +122,38 @@ void process_files(const char *input_file, const char *output_file, uint8_t *key
 
     uint8_t block[8];
     size_t block_size;
-    size_t last_block_size = 0;
 
-    while ((block_size = fread(block, 1, 8, in)) > 0) {
-        last_block_size = block_size;
-
-        // Encrypt mode: Add padding if last block is less than 8 bytes
-        if (mode == 1 && block_size < 8) {
-            add_padding(block, &block_size);
+    while ((block_size = fread(block, 1, 8, in)) == 8) {
+        // Encrypt mode: Encrypt each block
+        if (mode == 1) {
+            des(block, key, mode);
+            fwrite(block, 1, 8, out);
         }
-
-        // Perform DES encryption or decryption
-        des(block, key, mode);
-
-        fwrite(block, 1, block_size, out);
+        // Decrypt mode: Decrypt each block except the last one
+        else if (mode == 0) {
+            des(block, key, mode);
+            fwrite(block, 1, 8, out);
+        }
     }
 
-    // Decrypt mode: Remove padding from the last block
-    if (mode == 0 && last_block_size == 8) {
-        fseek(out, -8, SEEK_END);
-        fread(block, 1, 8, out);
-        remove_padding(block, &last_block_size);
+    if (mode == 1) { // Encrypt mode
+        // Add padding for the last block if it's less than 8 bytes
+        if (block_size > 0 && block_size < 8) {
+            add_padding(block, &block_size);
+            des(block, key, mode);
+            fwrite(block, 1, 8, out);
+        }
+    } else if (mode == 0 && block_size > 0) { // Decrypt mode
+        // Process the last block and remove padding
+        des(block, key, mode);
+        remove_padding(block, &block_size);
+        fwrite(block, 1, block_size, out);
 
 #ifdef _WIN32
-        // Use _chsize() for Windows
+        // Truncate the file to remove padding bytes on Windows
         _chsize(_fileno(out), ftell(out));
 #else
-        // Use ftruncate() for Unix-like systems
+        // Truncate the file to remove padding bytes on Unix-like systems
         ftruncate(fileno(out), ftell(out));
 #endif
     }

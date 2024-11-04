@@ -71,6 +71,36 @@ int handle_ciphertext_file(const char *filename);
 void hex_to_bytes(const char *hex, uint8_t *key);
 
 /**
+ * @brief Loads a DES key from a file in either binary or hexadecimal format.
+ * 
+ * This function reads a DES key from the specified file. The key can be stored 
+ * as 8 raw bytes in binary format or as a 16-character hexadecimal string. 
+ * If the key is in binary format, it reads directly into the `key` array. 
+ * If the key is in hexadecimal format, it reads 16 hex characters and converts 
+ * them into bytes.
+ * 
+ * @param[in] keyfile The path to the file containing the key.
+ * @param[out] key A pointer to an 8-byte array where the loaded key will be stored.
+ * 
+ * @return Returns 1 if the key is successfully loaded in the correct format, 
+ *         otherwise returns 0 and prints an error message.
+ * 
+ * @note The file must contain exactly 8 bytes (for binary format) or 16 hex characters 
+ *       (for hexadecimal format). If the file's contents do not match these criteria, 
+ *       an error is printed, and the function returns 0.
+ * 
+ * @example
+ * uint8_t des_key[8];
+ * int result = load_key_from_file("keyfile.txt", des_key);
+ * if (result) {
+ *     // Successfully loaded the key
+ * } else {
+ *     // Handle the error
+ * }
+ */
+int load_key_from_file(const char *keyfile, uint8_t *key);
+
+/**
  * @brief Adds PKCS#5/PKCS#7 padding to a block for 8-byte alignment.
  * 
  * This function adds padding to the given block to ensure that its size is a 

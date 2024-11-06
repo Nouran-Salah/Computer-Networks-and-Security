@@ -1,12 +1,12 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -D_POSIX_C_SOURCE=200112L -Iinc
+CFLAGS = -Wall -Wextra -std=c99 -D_POSIX_C_SOURCE=200112L -Iinclude
 DEBUG_FLAGS = -g
 
 # Directories
 SRC_DIR = src
 OBJ_DIR = obj
-INCLUDE_DIR = inc
+INCLUDE_DIR = include
 SCRIPT_DIR = graph/scripts
 GRAPH_IMAGES_DIR = graph_images
 GRAPH_DIR = graph

@@ -19,6 +19,9 @@
 # IDE specific files
 .vscode/
 .idea/
+.settings/
+.cproject
+.project
 
 # Build directories
 /build/
@@ -46,3 +49,4 @@ obj/
 # Ignore hex files
 *.hex
 
+/Default/

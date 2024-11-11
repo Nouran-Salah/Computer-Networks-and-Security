@@ -9,7 +9,7 @@ int main()
 {
     int x, y;
 
-    cout << "=== GCD and Modular Inverse Calculator ===\n\n";
+    display_welcome_message();
 
     do
     {

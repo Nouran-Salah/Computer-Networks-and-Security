@@ -2,6 +2,14 @@
 #define UTILITIES_HPP
 
 /**
+ * @brief Displays a welcome message for the GCD and Modular Inverse Calculator.
+ *
+ * This function prints a visually structured title screen with borders to welcome
+ * the user to the program, providing a clear indication of the program's purpose.
+ */
+void display_welcome_message();
+
+/**
  * @brief Prompts the user for two positive integers and stores them in the provided references.
  *
  * This function prompts the user to enter two positive integers and performs basic
@@ -35,4 +43,3 @@ void display_results(int x, int y, int gcd_val, int inverse);
 bool ask_to_continue();
 
 #endif // UTILITIES_HPP
-

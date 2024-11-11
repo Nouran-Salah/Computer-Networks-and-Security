@@ -21,6 +21,9 @@ SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
 DEBUG_OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.debug.o, $(SRC_FILES))
 
+# Default arguments
+ARGS ?= --help
+
 # Phony targets
 .PHONY: all clean docs debug run run_debug
 
@@ -51,13 +54,13 @@ $(OBJ_DIR)/%.debug.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Run the main executable from bin directory
+# Run the main executable with default or specified arguments
 run: $(TARGET)
-	./$(TARGET)
+	./$(TARGET) $(ARGS)
 
-# Run the debug executable from bin directory
+# Run the debug executable with default or specified arguments
 run_debug: $(DEBUG_TARGET)
-	./$(DEBUG_TARGET)
+	./$(DEBUG_TARGET) $(ARGS)
 
 # Generate documentation (call and callee graphs)
 docs:

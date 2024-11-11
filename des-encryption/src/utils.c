@@ -13,20 +13,20 @@
 
 // Helper function to print usage prompt
 void print_usage() {
-    printf("Usage: ./program -m <e|d> [-k <key> | -f <keyfile>] <input_file> <output_file>\n\n");
+    printf("Usage: ./bin/des_encryption -m <e|d> [-k <key> | -f <keyfile>] <input_file> <output_file>\n\n");
     printf("Options:\n");
     printf("  -m, --mode <e|d>       Specify mode: 'e' for encryption, 'd' for decryption (required)\n");
     printf("  -k, --key <key>        Key as a 16-character hexadecimal string (either -k or -f is required)\n");
     printf("  -f, --keyfile <file>   Key file (8-byte binary or 16-character hex string, either -k or -f is required)\n");
     printf("  -h, --help             Display this help message\n\n");
-    
+
     printf("Positional Arguments:\n");
     printf("  <input_file>           Path to the input file\n");
     printf("  <output_file>          Path to the output file\n\n");
 
     printf("Examples:\n");
-    printf("  ./des_encryption -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin\n");
-    printf("  ./des_encryption --mode d --keyfile keyfile.bin ciphertext.bin decrypted.txt\n");
+    printf("  ./bin/des_encryption -m e -k 0123456789ABCDEF plaintext.txt ciphertext.bin\n");
+    printf("  ./bin/des_encryption --mode d --keyfile keyfile.bin ciphertext.bin decrypted.txt\n");
 }
 
 // Function to check if a file exists
@@ -91,7 +91,7 @@ int load_key_from_file(const char *keyfile, uint8_t *key) {
 void add_padding(uint8_t *block, size_t *block_size) {
     // Calculate the padding length
     size_t padding_len = 8 - (*block_size % 8);
-    
+
     // Add padding bytes to the block
     for (size_t i = *block_size; i < *block_size + padding_len; i++) {
         block[i] = (uint8_t)padding_len;
@@ -102,7 +102,7 @@ void add_padding(uint8_t *block, size_t *block_size) {
 void remove_padding(uint8_t *block, size_t *block_size) {
     // Get the padding length from the last byte
     uint8_t padding_len = block[*block_size - 1];
-    
+
     // Ensure padding length is valid
     if (padding_len > 0 && padding_len <= 8) {
         *block_size -= padding_len; // Adjust block size by removing padding

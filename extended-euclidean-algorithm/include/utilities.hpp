@@ -42,4 +42,39 @@ void display_results(int x, int y, int gcd_val, int inverse);
  */
 bool ask_to_continue();
 
+/**
+ * @defgroup ANSI_Color_Codes ANSI Color Codes
+ * @brief Macros for ANSI escape codes used to color console output.
+ * @{
+ */
+
+/** @brief Resets all text attributes to default. */
+#define RESET "\033[0m"
+
+/** @brief Sets the text color to red. */
+#define RED "\033[31m"
+
+/** @brief Sets the text color to green. */
+#define GREEN "\033[32m"
+
+/** @brief Sets the text color to yellow. */
+#define YELLOW "\033[33m"
+
+/** @brief Sets the text color to blue. */
+#define BLUE "\033[34m"
+
+/** @brief Sets the text color to magenta. */
+#define MAGENTA "\033[35m"
+
+/** @brief Sets the text color to cyan. */
+#define CYAN "\033[36m"
+
+/** @brief Sets the text color to white. */
+#define WHITE "\033[37m"
+
+/** @brief Sets the text style to bold. */
+#define BOLD "\033[1m"
+
+/** @} */ // end of ANSI_Color_Codes group
+
 #endif // UTILITIES_HPP

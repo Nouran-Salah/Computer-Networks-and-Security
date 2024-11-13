@@ -1,0 +1,53 @@
+# Ignore compiled object files, binaries, and libraries
+*.o
+*.a
+*.so
+*.dll
+*.exe
+
+# Ignore build and output directories
+/build/
+/bin/
+/obj/
+/out/
+
+# Ignore backup and temporary files
+*.tmp
+*.swp
+*.bak
+*.log
+*.DS_Store
+*.idea/
+*.vscode/
+*.class
+*.~*
+
+# Ignore system files
+Thumbs.db
+desktop.ini
+
+# Ignore dependency directories
+/node_modules/
+/vendor/
+/__pycache__/
+/.env
+*.pyc
+
+# Ignore specific IDE/editor files
+.vscode/
+.idea/
+/*.iml
+
+# Ignore generated documentation
+/doc/
+/docs/
+
+# Ignore archive files
+*.zip
+*.tar.gz
+*.tar.bz2
+
+# Ignore configuration and secrets
+*.env
+*.config
+*.settings

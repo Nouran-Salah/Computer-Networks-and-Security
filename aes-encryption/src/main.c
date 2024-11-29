@@ -1,0 +1,1 @@
+// contains the main function that reads the input file, key file, and mode of operation from the command line arguments.It then encrypts or decrypts the input file using the AES algorithm with the provided key.

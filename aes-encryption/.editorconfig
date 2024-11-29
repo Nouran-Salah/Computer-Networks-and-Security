@@ -13,28 +13,39 @@ end_of_line = lf
 insert_final_newline = true
 # Trim trailing whitespace on save
 trim_trailing_whitespace = true
-
-# Settings for C/C++ source files
-[*.{c,cpp,h,hpp}]
-# Use 4 spaces for indentation
+# Default indentation style and size
 indent_style = space
 indent_size = 4
+# Maximum line length
+max_line_length = 120
+
+# Settings for C/C++ source and header files
+[*.{c,cpp,h,hpp}]
+# Inherit default indent_style and indent_size
+# Set max line length for C/C++ files
+max_line_length = 100
 
 # Settings for Makefiles
 [Makefile]
 # Use tabs for indentation in Makefiles
 indent_style = tab
+# No max line length for Makefiles
+max_line_length = off
 
-# Settings for Python files (e.g., scripts in your project)
-[*.py]
-# Use 4 spaces for indentation in Python files
+# Settings for Doxygen configuration files
+[Doxyfile]
+# Use 2 spaces for indentation
 indent_style = space
-indent_size = 4
+indent_size = 2
+# Set max line length for Doxygen files
+max_line_length = 120
 
 # Settings for Markdown files (e.g., README.md)
 [*.md]
 # Use 2 spaces for indentation in Markdown files
 indent_style = space
 indent_size = 2
-# Trim trailing whitespace but not in Markdown files, as it may have meaning
+# Do not trim trailing whitespace in Markdown files
 trim_trailing_whitespace = false
+# Set max line length for Markdown files
+max_line_length = 80

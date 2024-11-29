@@ -72,3 +72,18 @@ clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
 	rm -f $(GRAPH_IMAGES_DIR)/*.png
 	rm -f $(GRAPH_DIR)/*.dot $(GRAPH_DIR)/*.txt
+
+# Help target
+help:
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Available targets:"
+	@echo "  all          - Build the main executable (default)"
+	@echo "  debug        - Build the debug executable with debug flags"
+	@echo "  run          - Run the main executable with default or specified arguments"
+	@echo "                 e.g., make run ARGS=\"arguments\""
+	@echo "  run_debug    - Run the debug executable with default or specified arguments"
+	@echo "                 e.g., make run_debug ARGS=\"arguments\""
+	@echo "  docs         - Generate documentation (call and callee graphs)"
+	@echo "  clean        - Clean up build artifacts, generated files, and directories"
+	@echo "  help         - Display this help message"

@@ -6,13 +6,14 @@
 #include <io.h>      // For _chsize()
 #include <windows.h> // For _fileno()
 #else
-#include <unistd.h>  // For ftruncate() and fileno()
+#include <unistd.h> // For ftruncate() and fileno()
 #endif
 #include "utils.h"
 #include "des.h"
 
 // Helper function to print usage prompt
-void print_usage() {
+void print_usage()
+{
     printf("Usage: ./bin/des_encryption -m <e|d> [-k <key> | -f <keyfile>] <input_file> <output_file>\n\n");
     printf("Options:\n");
     printf("  -m, --mode <e|d>       Specify mode: 'e' for encryption, 'd' for decryption (required)\n");
@@ -30,9 +31,11 @@ void print_usage() {
 }
 
 // Function to check if a file exists
-int file_exists(const char *filename) {
+int file_exists(const char *filename)
+{
     FILE *file = fopen(filename, "r");
-    if (file) {
+    if (file)
+    {
         fclose(file);
         return 1;
     }
@@ -40,8 +43,10 @@ int file_exists(const char *filename) {
 }
 
 // Function to handle file overwrite warning for ciphertext
-int handle_ciphertext_file(const char *filename) {
-    if (file_exists(filename)) {
+int handle_ciphertext_file(const char *filename)
+{
+    if (file_exists(filename))
+    {
         printf("Warning: %s already exists.\n", filename);
         printf("Do you want to (a)ppend or (c)lear the contents? (a/c): ");
         char choice;
@@ -52,23 +57,28 @@ int handle_ciphertext_file(const char *filename) {
 }
 
 // Function to convert hexadecimal string to byte array (for 8-byte key)
-void hex_to_bytes(const char *hex, uint8_t *key) {
-    for (int i = 0; i < 8; i++) {
+void hex_to_bytes(const char *hex, uint8_t *key)
+{
+    for (int i = 0; i < 8; i++)
+    {
         sscanf(hex + 2 * i, "%2hhx", &key[i]);
     }
 }
 
 // Function to load key from a file (either hex string or binary format)
-int load_key_from_file(const char *keyfile, uint8_t *key) {
+int load_key_from_file(const char *keyfile, uint8_t *key)
+{
     FILE *file = fopen(keyfile, "rb");
-    if (!file) {
+    if (!file)
+    {
         perror("Error opening key file");
         return 0;
     }
 
     // Try reading the key as raw bytes (binary format)
     size_t bytes_read = fread(key, 1, 8, file);
-    if (bytes_read == 8) {
+    if (bytes_read == 8)
+    {
         fclose(file);
         return 1; // Successfully read 8-byte key in binary format
     }
@@ -76,7 +86,8 @@ int load_key_from_file(const char *keyfile, uint8_t *key) {
     // If only part of the file is read, or more than 8 bytes, reset and read as hex string
     fseek(file, 0, SEEK_SET);
     char hex_key[17] = {0}; // For storing 16 hex characters + null terminator
-    if (fread(hex_key, 1, 16, file) == 16) {
+    if (fread(hex_key, 1, 16, file) == 16)
+    {
         fclose(file);
         hex_to_bytes(hex_key, key); // Convert hex string to bytes
         return 1;
@@ -88,38 +99,45 @@ int load_key_from_file(const char *keyfile, uint8_t *key) {
 }
 
 // PKCS#5/PKCS#7 padding for 8-byte blocks
-void add_padding(uint8_t *block, size_t *block_size) {
+void add_padding(uint8_t *block, size_t *block_size)
+{
     // Calculate the padding length
     size_t padding_len = 8 - (*block_size % 8);
 
     // Add padding bytes to the block
-    for (size_t i = *block_size; i < *block_size + padding_len; i++) {
+    for (size_t i = *block_size; i < *block_size + padding_len; i++)
+    {
         block[i] = (uint8_t)padding_len;
     }
     *block_size += padding_len; // Update the block size with padding
 }
 
-void remove_padding(uint8_t *block, size_t *block_size) {
+void remove_padding(uint8_t *block, size_t *block_size)
+{
     // Get the padding length from the last byte
     uint8_t padding_len = block[*block_size - 1];
 
     // Ensure padding length is valid
-    if (padding_len > 0 && padding_len <= 8) {
+    if (padding_len > 0 && padding_len <= 8)
+    {
         *block_size -= padding_len; // Adjust block size by removing padding
     }
 }
 
 // Function to process files for encryption or decryption
-void process_files(const char *input_file, const char *output_file, uint8_t *key, int mode) {
+void process_files(const char *input_file, const char *output_file, uint8_t *key, int mode)
+{
     FILE *in = fopen(input_file, "rb");
     FILE *out = fopen(output_file, (mode == 1) ? "ab" : "wb");
 
-    if (!in) {
+    if (!in)
+    {
         perror("Error opening input file");
         exit(EXIT_FAILURE);
     }
 
-    if (!out) {
+    if (!out)
+    {
         perror("Error opening output file");
         fclose(in);
         exit(EXIT_FAILURE);
@@ -129,11 +147,13 @@ void process_files(const char *input_file, const char *output_file, uint8_t *key
     size_t block_size;
     size_t last_block_size = 0;
 
-    while ((block_size = fread(block, 1, 8, in)) > 0) {
+    while ((block_size = fread(block, 1, 8, in)) > 0)
+    {
         last_block_size = block_size;
 
         // Encrypt mode: Add padding if last block is less than 8 bytes
-        if (mode == 1 && block_size < 8) {
+        if (mode == 1 && block_size < 8)
+        {
             add_padding(block, &block_size);
         }
 
@@ -144,7 +164,8 @@ void process_files(const char *input_file, const char *output_file, uint8_t *key
     }
 
     // Decrypt mode: Remove padding from the last block
-    if (mode == 0 && last_block_size == 8) {
+    if (mode == 0 && last_block_size == 8)
+    {
         fseek(out, -8, SEEK_END);
         fread(block, 1, 8, out);
         remove_padding(block, &last_block_size);

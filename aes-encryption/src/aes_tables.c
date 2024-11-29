@@ -1,3 +1,8 @@
+/**
+ * @file aes_tables.c
+ * @brief Definitions of the AES S-box and Inverse S-box tables.
+ */
+
 #include "aes_tables.h"
 
 // AES S-box

@@ -1,0 +1,10 @@
+{
+  "files.associations": {
+    "aes.h": "c",
+    "utils.h": "c",
+    "file_io.h": "c",
+    "stdio.h": "c",
+    "stddef.h": "c",
+    "key_schedule.h": "c"
+  }
+}

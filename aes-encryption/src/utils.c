@@ -67,7 +67,11 @@ uint8_t gf_mul(uint8_t a, uint8_t b)
 
 void sub_bytes(uint8_t state[4][4])
 {
-    // TODO: Implement SubBytes transformation
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            state[i][j] = aes_sbox[state[i][j]];
+        }
+    }
 }
 
 void shift_rows(uint8_t state[4][4])
@@ -82,7 +86,11 @@ void mix_columns(uint8_t state[4][4])
 
 void inv_sub_bytes(uint8_t state[4][4])
 {
-    // TODO: Implement InvSubBytes transformation
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            state[i][j] = aes_inv_sbox[state[i][j]];
+        }
+    }
 }
 
 void inv_shift_rows(uint8_t state[4][4])

@@ -60,7 +60,17 @@ uint8_t gf_mul(uint8_t a, uint8_t b)
 {
     uint8_t result = 0;
 
-    // TODO: Implement multiplication in GF(2^8)
+   for (int i = 0; i < 8; i++) {
+        if (b & 1) {
+            result ^= a;
+        }
+        uint8_t high_bit = a & 0x80;
+        a <<= 1;
+        if (high_bit) {
+            a ^= 0x1B; // Irreducible polynomial
+        }
+        b >>= 1;
+    }
 
     return result;
 }
@@ -70,7 +80,7 @@ void sub_bytes(uint8_t state[4][4])
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             state[i][j] = aes_sbox[state[i][j]];
-            
+
         }
     }
 }

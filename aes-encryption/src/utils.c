@@ -6,21 +6,28 @@
 #include "utils.h"
 #include "aes_tables.h"
 
-void rotate_word(uint8_t *word)
-{
-    uint8_t temp = word[0];
-    word[0] = word[1];
-    word[1] = word[2];
-    word[2] = word[3];
-    word[3] = temp;
+uint32_t rotate_word(uint32_t word){
+    uint32_t rotated = (word << 8) | (word >> 24);
+    return rotated;
 }
 
-void sub_word(uint8_t *word)
-{
-    for (int i = 0; i < 4; ++i)
-    {
-        word[i] = aes_sbox[word[i]];
-    }
+
+uint32_t sub_word(uint32_t word){
+	uint8_t Byte[4];
+
+    uint8_t subBOX[4];
+	
+    int res=0;
+	
+    for(int i = 0; i < 4; i++){
+	
+    Byte[i] = word >> (24 - 8 * i);
+	
+    subBOX[i] = aes_sbox[Byte[i]];
+	
+    res |= (subBOX[i] << (24 - 8 * i));
+	}
+	return res;
 }
 
 void add_round_key(uint8_t state[4][4], const uint8_t *round_key)

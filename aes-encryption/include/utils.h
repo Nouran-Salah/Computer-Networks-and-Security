@@ -13,14 +13,14 @@
  *
  * @param[in,out]  word  Pointer to the word (array of 4 bytes) to rotate.
  */
-void rotate_word(uint8_t *word);
+uint32_t rotate_word(uint32_t word);
 
 /**
  * @brief Applies the AES S-box to each byte of a word.
  *
  * @param[in,out]  word  Pointer to the word (array of 4 bytes) to substitute.
  */
-void sub_word(uint8_t *word);
+uint32_t sub_word(uint32_t word);
 
 /**
  * @brief Adds (XORs) the round key to the state.

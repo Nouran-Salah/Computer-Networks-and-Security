@@ -10,11 +10,23 @@
 
 void key_expansion(const uint8_t *key, uint8_t *expanded_key)
 {
-    uint32_t i;
-    uint8_t temp[4];
+	uint32_t word[44];
 
-    // Copy the original key into the first 16 bytes of expanded_key
     memcpy(expanded_key, key, AES_BLOCK_SIZE);
+    
+    for (uint8_t i = 0; i < 4 ; i++)
+        word[i] = (key[4 * i + 0] << 24)|(key[4 * i + 1] << 16)|(key[4 * i + 2] << 8)|(key[4 * i + 3]);
 
-    // TODO: Implement the key expansion algorithm for AES-128
+    uint8_t j = 0;
+     for (int i = 4; i < 44; i++) {
+         if (i % 4 == 0)
+             word[i] = word[i-4] ^ sub_word(rotate_word(word[i - 1])) ^ (Rcon[j++]);
+          else
+             word[i] = word[i - 1] ^ word[i - 4];
+     }
+
+     for(int i=16; i < 176; i++)
+    	 expanded_key[i] = (word[i/4] >> (24 - 8 *(i%4)));
+
 }
+

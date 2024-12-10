@@ -92,9 +92,31 @@ void sub_bytes(uint8_t state[4][4])
     }
 }
 
+
+void shift_by_one(uint8_t state[], int32_t size) {
+    uint8_t temp = state[0];
+    for (int i = 0; i < size; i++) {
+        state[i] = state[i+1];
+    }
+    state[3] = temp;
+}
+
 void shift_rows(uint8_t state[4][4])
 {
     // TODO: Implement ShiftRows transformation
+
+    // Row 1: shift left by 1
+    shift_by_one(state[1], 4);
+    
+    // Row 2: shift left by 2
+    shift_by_one(state[2], 4);
+    shift_by_one(state[2], 4);
+
+    // Row 1: shift left by 3
+    shift_by_one(state[3], 4);
+    shift_by_one(state[3], 4);
+    shift_by_one(state[3], 4);
+
 }
 
 void mix_columns(uint8_t state[4][4])

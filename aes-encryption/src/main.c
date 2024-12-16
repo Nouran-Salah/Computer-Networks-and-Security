@@ -1,6 +1,7 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 #include <getopt.h>
 #include "aes.h"
 #include "file_io.h"
@@ -31,7 +32,8 @@ void print_usage()
 int main(int argc, char *argv[])
 {
     char mode = 0;            // 'e' for encrypt, 'd' for decrypt
-    char key[AES_KEY_LENGTH]; // Key array
+    uint8_t *key = NULL;      // Pointer to hold the key read from file
+    size_t key_length = 0;    // Variable to hold the size of the key
     char *keyfile = NULL;     // Path to key file
     char *input_file = NULL;  // Path to input file
     char *output_file = NULL; // Path to output file
@@ -66,6 +68,7 @@ int main(int argc, char *argv[])
                 fprintf(stderr, "Error: Key must be 16 bytes (32 hex characters).\n");
                 return 1;
             }
+            key = (uint8_t *)malloc(AES_KEY_LENGTH); // Dynamically allocate key
             for (int i = 0; i < AES_KEY_LENGTH; i++)
             {
                 sscanf(&optarg[2 * i], "%2hhx", &key[i]);
@@ -106,19 +109,28 @@ int main(int argc, char *argv[])
     // Load key from file if necessary
     if (keyfile)
     {
-        if (read_file(keyfile, (uint8_t *)key, AES_KEY_LENGTH) != 0)
+        if (read_file(keyfile, &key, &key_length) != 0)
         {
             fprintf(stderr, "Error: Failed to load key from file.\n");
+            return 1;
+        }
+
+        if (key_length != AES_KEY_LENGTH)
+        {
+            fprintf(stderr, "Error: Key length mismatch. Expected %d bytes, got %zu bytes.\n", AES_KEY_LENGTH, key_length);
+            free(key);
             return 1;
         }
     }
 
     // Execute the specified mode
-    if (execute_mode(mode, (uint8_t *)key, input_file, output_file) != 0)
+    if (execute_mode(mode, key, input_file, output_file) != 0)
     {
+        free(key); // Free allocated key before exiting
         return 1;
     }
 
     printf("Operation completed successfully.\n");
+    free(key); // Free allocated key before exiting
     return 0;
 }

@@ -22,6 +22,6 @@ void print_usage()
     printf("  <output_file>          Path to the output file\n\n");
 
     printf("Examples:\n");
-    printf("  ./aes_tool -m e -k 00112233445566778899aabbccddeeff plaintext.txt ciphertext.bin\n");
-    printf("  ./aes_tool -m d -f keyfile.bin ciphertext.bin decrypted.txt\n");
+    printf("  ./bin/aes_encryption -m e -k 00112233445566778899aabbccddeeff plaintext.txt ciphertext.bin\n");
+    printf("  ./bin/aes_encryption -m d -f keyfile.bin ciphertext.bin decrypted.txt\n");
 }

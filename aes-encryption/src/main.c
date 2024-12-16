@@ -5,6 +5,7 @@
 #include <getopt.h>
 #include "aes.h"
 #include "file_io.h"
+#include "help.h"
 
 #define AES_KEY_LENGTH 16 // AES-128 key size
 

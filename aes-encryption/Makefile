@@ -10,7 +10,7 @@ OBJ_DIR = obj
 BIN_DIR = bin
 
 # Files
-TARGET = $(BIN_DIR)/aes_tool
+TARGET = $(BIN_DIR)/aes_encryption
 SOURCES = $(wildcard $(SRC_DIR)/*.c)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 DEPENDENCIES = $(OBJECTS:.o=.d)

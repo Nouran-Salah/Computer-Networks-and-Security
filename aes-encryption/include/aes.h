@@ -29,4 +29,15 @@ void aes_encrypt_block(const uint8_t *plaintext, uint8_t *ciphertext, const uint
  */
 void aes_decrypt_block(const uint8_t *ciphertext, uint8_t *plaintext, const uint8_t *key);
 
+/**
+ * @brief Executes the AES encryption or decryption mode.
+ *
+ * @param mode        'e' for encryption, 'd' for decryption.
+ * @param key         The AES key.
+ * @param input_file  Path to the input file.
+ * @param output_file Path to the output file.
+ * @return 0 on success, 1 on failure.
+ */
+int execute_mode(char mode, const uint8_t *key, const char *input_file, const char *output_file);
+
 #endif // AES_H

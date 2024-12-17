@@ -5,9 +5,6 @@
 
 #include <stdio.h>
 
-/**
- * @brief Prints the usage instructions for the AES tool.
- */
 void print_usage()
 {
     printf("Usage: ./aes_tool -m <e|d> [-k <key> | -f <keyfile>] <input_file> <output_file>\n\n");

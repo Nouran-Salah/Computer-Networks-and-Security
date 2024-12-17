@@ -8,7 +8,7 @@
 #else
 #include <unistd.h> // For ftruncate() and fileno()
 #endif
-#include "utils.h"
+#include "file_io.h"
 #include "des.h"
 
 // Function to check if a file exists

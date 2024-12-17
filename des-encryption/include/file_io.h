@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef FILE_IO_H
+#define FILE_IO_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -161,4 +161,4 @@ void remove_padding(uint8_t *block, size_t *block_size);
  */
 void process_files(const char *plaintext_file, const char *ciphertext_file, uint8_t *key, int mode);
 
-#endif // UTILS_H
+#endif // FILE_IO_H

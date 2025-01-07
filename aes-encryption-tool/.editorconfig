@@ -1,0 +1,51 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# Default settings for all files
+[*]
+# Set default charset to UTF-8
+charset = utf-8
+# Set end of line to LF (Unix-style)
+end_of_line = lf
+# Ensure files end with a newline
+insert_final_newline = true
+# Trim trailing whitespace on save
+trim_trailing_whitespace = true
+# Default indentation style and size
+indent_style = space
+indent_size = 4
+# Maximum line length
+max_line_length = 120
+
+# Settings for C/C++ source and header files
+[*.{c,cpp,h,hpp}]
+# Inherit default indent_style and indent_size
+# Set max line length for C/C++ files
+max_line_length = 100
+
+# Settings for Makefiles
+[Makefile]
+# Use tabs for indentation in Makefiles
+indent_style = tab
+# No max line length for Makefiles
+max_line_length = off
+
+# Settings for Doxygen configuration files
+[Doxyfile]
+# Use 2 spaces for indentation
+indent_style = space
+indent_size = 2
+# Set max line length for Doxygen files
+max_line_length = 120
+
+# Settings for Markdown files (e.g., README.md)
+[*.md]
+# Use 2 spaces for indentation in Markdown files
+indent_style = space
+indent_size = 2
+# Do not trim trailing whitespace in Markdown files
+trim_trailing_whitespace = false
+# Set max line length for Markdown files
+max_line_length = 80

@@ -141,7 +141,7 @@ The project utilizes a `Makefile` for efficient compilation and linking. Follow 
 
 The executable `montgomery_exp` is located in the `bin/` directory. It provides options for encrypting and decrypting files using AES-128.
 
-### **Basic Command Structure**
+### Basic Command Structure
 
 ```bash
 ./bin/montgomery_exp -m <mode> -k <key> <input_file> <output_file>
@@ -154,7 +154,7 @@ The executable `montgomery_exp` is located in the `bin/` directory. It provides 
 - **`<input_file>`**: Path to the input file
 - **`<output_file>`**: Path to the output file
 
-### **Examples**
+### Examples
 
 1. **Encrypting a File**
 
@@ -182,13 +182,13 @@ The executable `montgomery_exp` is located in the `bin/` directory. It provides 
    - **Input File**: `ciphertext.bin`
    - **Output File**: `decrypted.txt`
 
-### **Key Management**
+### Key Management
 
 - **Key Length**: For AES-128, the key must be **32 hexadecimal characters** (16 bytes).
 - **Format**: Ensure the key consists of valid hexadecimal characters (`0-9`, `a-f`, `A-F`).
 - **Security**: Do not hardcode keys in scripts or source code. Pass them securely via command-line arguments or environment variables.
 
-### **Help Command**
+### Help Command
 
 For assistance and to view usage instructions, run the executable without arguments or with the `-h` flag:
 
@@ -212,9 +212,9 @@ Options:
 
 Thorough testing ensures that the AES Encryption and Decryption Tool functions correctly across various scenarios. Below are guidelines and scripts to assist in testing.
 
-### **1. Dummy Data Files**
+### 1. Dummy Data Files
 
-#### **a. Text Files**
+#### a. Text Files
 
 - **`plaintext.txt`**: Contains sample text for encryption and decryption.
 
@@ -241,7 +241,7 @@ Thorough testing ensures that the AES Encryption and Decryption Tool functions c
   EOL
   ```
 
-#### **b. Binary Files**
+#### b. Binary Files
 
 - **`binary_dummy.bin`**: Contains random binary data for encryption and decryption.
 
@@ -257,7 +257,7 @@ Thorough testing ensures that the AES Encryption and Decryption Tool functions c
   dd if=/dev/zero bs=1 count=512 | tr '\0' '\377' > binary_dummy.bin
   ```
 
-#### **c. Hexadecimal Data**
+#### c. Hexadecimal Data
 
 - **`hex_dummy.txt`**: Contains hexadecimal representations of data.
 
@@ -267,9 +267,9 @@ Thorough testing ensures that the AES Encryption and Decryption Tool functions c
   echo -n "48656C6C6F2C20776F726C64210A5468697320697320612068657820646174652066696C652E0A313233343536373839306162636465666768696A6B6C6D6E6F707172737475767778797A0A53686F72740A416C6F6E676572206C696E65206F66207465787420746F20746573742070616464696E67206D656368616E69736D7320696E2041455320656E6372797074696F6E2E0A456E64206F662064756D6D7920646174612E0A" > hex_dummy.txt
   ```
 
-### **2. Automated Testing Scripts**
+### 2. Automated Testing Scripts
 
-#### **a. Shell Script for Automated Testing (`test_aes.sh`)**
+#### a. Shell Script for Automated Testing (`test_aes.sh`)
 
 This script automates the process of encrypting and decrypting multiple test files and verifies their integrity.
 
@@ -405,7 +405,7 @@ SUCCESS: empty.txt encrypted and decrypted correctly.
 
 _(Note: `[N]` and `[Original Length]` will vary based on the file size and padding applied.)_
 
-### **3. Manual Testing**
+### 3. Manual Testing
 
 You can manually test encryption and decryption using the provided dummy data files.
 

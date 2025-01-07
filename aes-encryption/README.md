@@ -45,23 +45,32 @@ The **AES Encryption and Decryption Tool** is a command-line application develop
 
 ```
 .
-├── build                # Directory for build artifacts (object files)
-├── bin                  # Directory for the executable
-├── include              # Header files
-│   └── montgomery_exp.h # Header for Montgomery exponentiation
-├── lib                  # Static libraries
-│   └── libmontgomery.a  # Static library for Montgomery operations
-├── src                  # Source code
-│   ├── main.cpp         # Main application source
-│   └── montgomery_exp.cpp # Source for Montgomery exponentiation
-├── Makefile             # Makefile for building the project
-├── README.md            # Project documentation
-└── tests                # Directory for test files and scripts
-    ├── binary_dummy.bin  # Binary dummy data for testing
-    ├── create_binary_dummy.py # Python script to generate binary dummy data
-    ├── create_text_dummy.py   # Python script to generate text dummy data
-    ├── plaintext.txt         # Example plaintext file
-    └── test_aes.sh           # Shell script for automated testing
+├── build.bat
+├── docs
+│   ├── A2 - AES.pdf
+│   ├── AES test case.pdf
+│   ├── project-2-specs.pdf
+│   └── task-breakdown.pdf
+├── include
+│   ├── aes.h
+│   ├── aes_tables.h
+│   ├── aes_types.h
+│   ├── file_io.h
+│   ├── help.h
+│   ├── key_schedule.h
+│   ├── table_gen.h
+│   └── utils.h
+├── Makefile
+├── README.md
+└── src
+    ├── aes.c
+    ├── aes_tables.c
+    ├── file_io.c
+    ├── help.c
+    ├── key_schedule.c
+    ├── main.c
+    ├── table_gen.c
+    └── utils.c
 ```
 
 ## Prerequisites

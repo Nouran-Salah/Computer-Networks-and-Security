@@ -131,6 +131,10 @@ int decrypt_file(const char *input_file, const char *output_file, const uint8_t 
     uint8_t plaintext_block[AES_BLOCK_SIZE];
     size_t bytes_read;
 
+    // Buffer to hold the last decrypted block for padding removal
+    uint8_t *last_block = NULL;
+    size_t last_block_size = 0;
+
     while ((bytes_read = fread(ciphertext_block, 1, AES_BLOCK_SIZE, in_file)) > 0)
     {
         if (bytes_read != AES_BLOCK_SIZE)
@@ -144,24 +148,43 @@ int decrypt_file(const char *input_file, const char *output_file, const uint8_t 
         // Decrypt the block
         aes_decrypt_block(ciphertext_block, plaintext_block, key);
 
-        // Check for padding in the last block
-        if (feof(in_file))
+        // Allocate or reallocate memory for last_block
+        if (last_block == NULL)
         {
-            uint8_t padding_value = plaintext_block[AES_BLOCK_SIZE - 1];
-            if (padding_value > AES_BLOCK_SIZE)
+            last_block = malloc(AES_BLOCK_SIZE);
+            if (!last_block)
             {
-                fprintf(stderr, "Error: Invalid padding detected.\n");
+                fprintf(stderr, "Error: Memory allocation failed.\n");
                 fclose(in_file);
                 fclose(out_file);
                 return 1;
             }
-            fwrite(plaintext_block, 1, AES_BLOCK_SIZE - padding_value, out_file);
+        }
+
+        // If this is not the last block, write the previous last_block
+        // and update last_block to current plaintext_block
+        if (fread(ciphertext_block, 1, AES_BLOCK_SIZE, in_file) > 0)
+        {
+            // There is another block, write the current last_block
+            fwrite(last_block, 1, AES_BLOCK_SIZE, out_file);
+
+            // Update last_block to the new plaintext_block
+            memcpy(last_block, plaintext_block, AES_BLOCK_SIZE);
+
+            // Seek back by AES_BLOCK_SIZE bytes to read the block again in the next iteration
+            fseek(in_file, -AES_BLOCK_SIZE, SEEK_CUR);
         }
         else
         {
-            fwrite(plaintext_block, 1, AES_BLOCK_SIZE, out_file);
+            // This is the last block, remove padding and write it
+            size_t unpadded_len = remove_padding(plaintext_block, AES_BLOCK_SIZE);
+            fwrite(plaintext_block, 1, unpadded_len, out_file);
         }
     }
+
+    // Free allocated memory
+    if (last_block)
+        free(last_block);
 
     fclose(in_file);
     fclose(out_file);

@@ -7,6 +7,7 @@
 #define UTILS_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 /**
  * @brief Rotates a word (4 bytes) left by one byte.
@@ -96,5 +97,20 @@ void inv_shift_rows(uint8_t state[4][4]);
  * @param[in,out]  state  4x4 state matrix.
  */
 void inv_mix_columns(uint8_t state[4][4]);
+
+/**
+ * @brief Removes PKCS#7-style padding from a data buffer.
+ *
+ * This function inspects the last byte of the input buffer as a padding length,
+ * validates that the specified padding length does not exceed the original data
+ * size or the AES block size, and confirms that all trailing bytes match the
+ * padding value. If the padding is invalid, the function returns the original
+ * length without modification.
+ *
+ * @param data   Pointer to the data buffer from which to remove padding.
+ * @param length Size of the data buffer in bytes.
+ * @return       The effective size of the data after any valid padding is removed.
+ */
+size_t remove_padding(uint8_t *data, size_t length);
 
 #endif // UTILS_H

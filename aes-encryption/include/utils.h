@@ -113,4 +113,14 @@ void inv_mix_columns(uint8_t state[4][4]);
  */
 size_t remove_padding(uint8_t *data, size_t length);
 
+/**
+ * @brief Converts a hexadecimal string to a byte array.
+ *
+ * @param hex_str The hexadecimal string.
+ * @param bytes The output byte array.
+ * @param byte_len The expected length of the byte array.
+ * @return int 0 on success, -1 on failure.
+ */
+int hex_to_bytes(const char *hex_str, uint8_t *bytes, size_t byte_len);
+
 #endif // UTILS_H

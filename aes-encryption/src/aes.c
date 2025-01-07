@@ -128,63 +128,43 @@ int decrypt_file(const char *input_file, const char *output_file, const uint8_t 
     }
 
     uint8_t ciphertext_block[AES_BLOCK_SIZE];
-    uint8_t plaintext_block[AES_BLOCK_SIZE];
+    uint8_t decrypted_block[AES_BLOCK_SIZE];
     size_t bytes_read;
 
-    // Buffer to hold the last decrypted block for padding removal
-    uint8_t *last_block = NULL;
-    size_t last_block_size = 0;
+    // Buffer to hold the last decrypted block
+    uint8_t last_decrypted_block[AES_BLOCK_SIZE];
+    int has_last_block = 0;
 
-    while ((bytes_read = fread(ciphertext_block, 1, AES_BLOCK_SIZE, in_file)) > 0)
+    while ((bytes_read = fread(ciphertext_block, 1, AES_BLOCK_SIZE, in_file)) == AES_BLOCK_SIZE)
     {
-        if (bytes_read != AES_BLOCK_SIZE)
+        // Decrypt the current block
+        aes_decrypt_block(ciphertext_block, decrypted_block, key);
+
+        if (has_last_block)
         {
-            fprintf(stderr, "Error: Input file is not properly padded or corrupted.\n");
-            fclose(in_file);
-            fclose(out_file);
-            return 1;
+            // Write the previous decrypted block
+            fwrite(last_decrypted_block, 1, AES_BLOCK_SIZE, out_file);
         }
 
-        // Decrypt the block
-        aes_decrypt_block(ciphertext_block, plaintext_block, key);
-
-        // Allocate or reallocate memory for last_block
-        if (last_block == NULL)
-        {
-            last_block = malloc(AES_BLOCK_SIZE);
-            if (!last_block)
-            {
-                fprintf(stderr, "Error: Memory allocation failed.\n");
-                fclose(in_file);
-                fclose(out_file);
-                return 1;
-            }
-        }
-
-        // If this is not the last block, write the previous last_block
-        // and update last_block to current plaintext_block
-        if (fread(ciphertext_block, 1, AES_BLOCK_SIZE, in_file) > 0)
-        {
-            // There is another block, write the current last_block
-            fwrite(last_block, 1, AES_BLOCK_SIZE, out_file);
-
-            // Update last_block to the new plaintext_block
-            memcpy(last_block, plaintext_block, AES_BLOCK_SIZE);
-
-            // Seek back by AES_BLOCK_SIZE bytes to read the block again in the next iteration
-            fseek(in_file, -AES_BLOCK_SIZE, SEEK_CUR);
-        }
-        else
-        {
-            // This is the last block, remove padding and write it
-            size_t unpadded_len = remove_padding(plaintext_block, AES_BLOCK_SIZE);
-            fwrite(plaintext_block, 1, unpadded_len, out_file);
-        }
+        // Update last_decrypted_block with the current decrypted block
+        memcpy(last_decrypted_block, decrypted_block, AES_BLOCK_SIZE);
+        has_last_block = 1;
     }
 
-    // Free allocated memory
-    if (last_block)
-        free(last_block);
+    if (bytes_read != 0)
+    {
+        fprintf(stderr, "Error: Input file is not properly padded or corrupted.\n");
+        fclose(in_file);
+        fclose(out_file);
+        return 1;
+    }
+
+    if (has_last_block)
+    {
+        // Remove padding from the last decrypted block
+        size_t unpadded_len = remove_padding(last_decrypted_block, AES_BLOCK_SIZE);
+        fwrite(last_decrypted_block, 1, unpadded_len, out_file);
+    }
 
     fclose(in_file);
     fclose(out_file);

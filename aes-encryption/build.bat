@@ -3,7 +3,7 @@ REM Batch file for building and cleaning the AES encryption project on Windows
 
 REM Compiler and flags
 set CC=gcc
-set CFLAGS=-Wall -Wextra -std=c99 -Iinclude -g
+set CFLAGS=-std=c17 -Wall -Wextra -Werror -Iinclude -g
 
 REM Directories
 set SRC_DIR=src

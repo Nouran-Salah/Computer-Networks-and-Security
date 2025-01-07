@@ -3,6 +3,10 @@
  * @brief Implementation of utility functions for AES encryption and decryption.
  */
 
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 #include "utils.h"
 #include "aes_tables.h"
 #include "aes_types.h"
@@ -305,12 +309,10 @@ size_t remove_padding(uint8_t *data, size_t length)
     }
 
     uint8_t pad_len = data[length - 1];
-    printf("Padding length: %u\n", pad_len);
 
     // Validate padding length
-    if (pad_len > length || pad_len == 0 || pad_len > AES_BLOCK_SIZE)
+    if (pad_len == 0 || pad_len > AES_BLOCK_SIZE)
     {
-        printf("Invalid padding length: %u\n", pad_len);
         return length; // Return original length if padding is invalid
     }
 
@@ -319,13 +321,32 @@ size_t remove_padding(uint8_t *data, size_t length)
     {
         if (data[length - 1 - i] != pad_len)
         {
-            printf("Padding mismatch at byte %zu: expected %u, found %u\n",
-                   length - 1 - i, pad_len, data[length - 1 - i]);
             return length; // Padding mismatch, return original length
         }
     }
 
-    // Return new length after padding is removed
-    printf("Valid padding. Removing %u bytes.\n", pad_len);
     return length - pad_len;
+}
+
+int hex_to_bytes(const char *hex_str, uint8_t *bytes, size_t byte_len)
+{
+    size_t hex_len = strlen(hex_str);
+    if (hex_len != byte_len * 2)
+    {
+        return -1; // Invalid length
+    }
+
+    for (size_t i = 0; i < byte_len; i++)
+    {
+        char byte_str[3] = {0};
+        byte_str[0] = hex_str[i * 2];
+        byte_str[1] = hex_str[i * 2 + 1];
+        if (!isxdigit(byte_str[0]) || !isxdigit(byte_str[1]))
+        {
+            return -1; // Invalid hex digit
+        }
+        bytes[i] = (uint8_t)strtol(byte_str, NULL, 16);
+    }
+
+    return 0;
 }

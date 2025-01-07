@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -Iinclude -g
+CFLAGS = -std=c17 -Wall -Wextra -Werror -Iinclude -g
 LDFLAGS =
 
 # Directories
@@ -48,8 +48,10 @@ format:
 
 # Display usage
 help:
+	@echo "------------------------------------------------"
 	@echo "Usage:"
 	@echo "  make        - Build the project"
 	@echo "  make clean  - Remove build files"
 	@echo "  make format - Format the source code"
 	@echo "  make help   - Display this help message"
+	@echo "------------------------------------------------"

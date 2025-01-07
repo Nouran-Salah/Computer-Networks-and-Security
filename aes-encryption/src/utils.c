@@ -5,6 +5,7 @@
 
 #include "utils.h"
 #include "aes_tables.h"
+#include "aes_types.h"
 
 uint32_t rotate_word(uint32_t word)
 {
@@ -293,4 +294,38 @@ void inv_mix_columns(uint8_t state[4][4])
             state[j][i] = column[j];
         }
     }
+}
+
+size_t remove_padding(uint8_t *data, size_t length)
+{
+    if (length == 0)
+    {
+        printf("Error: Data length is zero.\n");
+        return 0;
+    }
+
+    uint8_t pad_len = data[length - 1];
+    printf("Padding length: %u\n", pad_len);
+
+    // Validate padding length
+    if (pad_len > length || pad_len == 0 || pad_len > AES_BLOCK_SIZE)
+    {
+        printf("Invalid padding length: %u\n", pad_len);
+        return length; // Return original length if padding is invalid
+    }
+
+    // Verify that all padding bytes are correct
+    for (size_t i = 0; i < pad_len; i++)
+    {
+        if (data[length - 1 - i] != pad_len)
+        {
+            printf("Padding mismatch at byte %zu: expected %u, found %u\n",
+                   length - 1 - i, pad_len, data[length - 1 - i]);
+            return length; // Padding mismatch, return original length
+        }
+    }
+
+    // Return new length after padding is removed
+    printf("Valid padding. Removing %u bytes.\n", pad_len);
+    return length - pad_len;
 }

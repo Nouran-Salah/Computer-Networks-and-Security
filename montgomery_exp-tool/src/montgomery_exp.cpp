@@ -1,4 +1,4 @@
-#include "montgomery_exp.h"
+#include "montgomery_exp.hpp"
 #include <iostream>
 
 MontgomeryExp::MontgomeryExp()

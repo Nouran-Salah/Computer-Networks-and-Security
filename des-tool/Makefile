@@ -8,9 +8,6 @@ SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
 INCLUDE_DIR = include
-SCRIPT_DIR = graph/scripts
-GRAPH_IMAGES_DIR = graph_images
-GRAPH_DIR = graph
 
 # Target executables
 TARGET = $(BIN_DIR)/des_encryption
@@ -62,16 +59,9 @@ run: $(TARGET)
 run_debug: $(DEBUG_TARGET)
 	./$(DEBUG_TARGET) $(ARGS)
 
-# Generate documentation (call and callee graphs)
-docs:
-	@mkdir -p $(GRAPH_IMAGES_DIR)
-	@bash $(SCRIPT_DIR)/generate_graphs.sh
-
 # Clean up build artifacts, generated files, and directories
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
-	rm -f $(GRAPH_IMAGES_DIR)/*.png
-	rm -f $(GRAPH_DIR)/*.dot $(GRAPH_DIR)/*.txt
 
 # Help target
 help:
@@ -84,6 +74,5 @@ help:
 	@echo "                 e.g., make run ARGS=\"arguments\""
 	@echo "  run_debug    - Run the debug executable with default or specified arguments"
 	@echo "                 e.g., make run_debug ARGS=\"arguments\""
-	@echo "  docs         - Generate documentation (call and callee graphs)"
 	@echo "  clean        - Clean up build artifacts, generated files, and directories"
 	@echo "  help         - Display this help message"

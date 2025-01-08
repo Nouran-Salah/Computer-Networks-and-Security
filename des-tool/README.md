@@ -17,22 +17,10 @@ Key features:
 
 ```plaintext
 des-encryption/
-├── graph_images/                # Contains generated images from graph files
-│   ├── callgraph.png            # PNG image of the caller graph
-│   ├── callee_graph.png         # PNG image of the callee graph
 ├── docs/                        # Documentation and project specifications
 │   ├── fips46-3.pdf             # FIPS standard document for DES
 │   ├── project-1-specs.pdf      # Project specifications
 │   └── the-des-algorithm-illustrated.pdf  # Visual guide to DES algorithm
-├── graph/                       # Intermediate graph files
-│   ├── callgraph.dot            # Generated DOT file for caller graph
-│   ├── callgraph.txt            # Caller graph output from `cflow`
-│   ├── callee_graph.dot         # Generated DOT file for callee graph
-│   ├── callee_graph.txt         # Callee graph output from `cflow`
-│   └── scripts/                 # Scripts for generating graphs
-│       ├── cflow_to_callee_dot.py # Script to convert cflow to callee graph in .dot
-│       ├── cflow_to_caller_dot.py # Script to convert cflow to caller graph in .dot
-│       └── generate_graphs.sh   # Script to automate graph generation
 ├── inc/                         # Header files
 │   ├── des.h                    # Header file for DES functions
 │   └── utils.h                  # Header file for utility functions

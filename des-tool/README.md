@@ -34,8 +34,7 @@ des-encryption/
 │   └── test_output.txt          # Expected output file for validation
 ├── .gitignore                   # Ignore build, generated files, and temporary files
 ├── Makefile                     # Makefile for building the project on Linux
-├── README.md                    # Project documentation and instructions
-└── plaintext.txt                # Sample plaintext file for testing encryption (could be moved to `test/`)
+└── README.md                    # Project documentation and instructions
 ```
 
 ---
@@ -76,22 +75,6 @@ Contains documentation and reference materials:
 - **`fips46-3.pdf`**: The official FIPS 46-3 standard document for DES, detailing algorithm specifications.
 - **`project-1-specs.pdf`**: Project specifications, including requirements and objectives.
 - **`the-des-algorithm-illustrated.pdf`**: A visual guide to DES for easier understanding.
-
-### **`graph_images/` Directory**
-
-- **Purpose**: Stores generated graph images (e.g., caller and callee graphs).
-- **Contents**: PNG images of the call graph and callee graph generated from source files.
-
-### **`graph/` Directory**
-
-Contains files and scripts related to graph generation:
-
-- **`.dot` and `.txt` Files**: Generated DOT and text files for caller and callee graphs.
-- **`scripts/`**: Python scripts and shell scripts for generating graphs using `cflow` and `dot`.
-
-### **`plaintext.txt`**
-
-- **Purpose**: Sample plaintext file for testing DES encryption and decryption functionality.
 
 ### **`README.md`**
 

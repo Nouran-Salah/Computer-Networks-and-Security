@@ -17,22 +17,10 @@ Key features:
 
 ```plaintext
 des-encryption/
-├── graph_images/                # Contains generated images from graph files
-│   ├── callgraph.png            # PNG image of the caller graph
-│   ├── callee_graph.png         # PNG image of the callee graph
 ├── docs/                        # Documentation and project specifications
 │   ├── fips46-3.pdf             # FIPS standard document for DES
 │   ├── project-1-specs.pdf      # Project specifications
 │   └── the-des-algorithm-illustrated.pdf  # Visual guide to DES algorithm
-├── graph/                       # Intermediate graph files
-│   ├── callgraph.dot            # Generated DOT file for caller graph
-│   ├── callgraph.txt            # Caller graph output from `cflow`
-│   ├── callee_graph.dot         # Generated DOT file for callee graph
-│   ├── callee_graph.txt         # Callee graph output from `cflow`
-│   └── scripts/                 # Scripts for generating graphs
-│       ├── cflow_to_callee_dot.py # Script to convert cflow to callee graph in .dot
-│       ├── cflow_to_caller_dot.py # Script to convert cflow to caller graph in .dot
-│       └── generate_graphs.sh   # Script to automate graph generation
 ├── inc/                         # Header files
 │   ├── des.h                    # Header file for DES functions
 │   └── utils.h                  # Header file for utility functions
@@ -46,8 +34,7 @@ des-encryption/
 │   └── test_output.txt          # Expected output file for validation
 ├── .gitignore                   # Ignore build, generated files, and temporary files
 ├── Makefile                     # Makefile for building the project on Linux
-├── README.md                    # Project documentation and instructions
-└── plaintext.txt                # Sample plaintext file for testing encryption (could be moved to `test/`)
+└── README.md                    # Project documentation and instructions
 ```
 
 ---
@@ -88,22 +75,6 @@ Contains documentation and reference materials:
 - **`fips46-3.pdf`**: The official FIPS 46-3 standard document for DES, detailing algorithm specifications.
 - **`project-1-specs.pdf`**: Project specifications, including requirements and objectives.
 - **`the-des-algorithm-illustrated.pdf`**: A visual guide to DES for easier understanding.
-
-### **`graph_images/` Directory**
-
-- **Purpose**: Stores generated graph images (e.g., caller and callee graphs).
-- **Contents**: PNG images of the call graph and callee graph generated from source files.
-
-### **`graph/` Directory**
-
-Contains files and scripts related to graph generation:
-
-- **`.dot` and `.txt` Files**: Generated DOT and text files for caller and callee graphs.
-- **`scripts/`**: Python scripts and shell scripts for generating graphs using `cflow` and `dot`.
-
-### **`plaintext.txt`**
-
-- **Purpose**: Sample plaintext file for testing DES encryption and decryption functionality.
 
 ### **`README.md`**
 
